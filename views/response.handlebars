@@ -1,5 +1,14 @@
 <div onload="doSetup()">
   <div class="response-cont container">
+    <div class="res-operator">
+      {{!-- <div class="form-edit" title="edit form">
+        <img src="https://img.icons8.com/material-outlined/24/000000/edit--v1.png"/>
+      </div> --}}
+      <div class="see-responses" title="see all responses" onclick="viewResponses()">
+        <img src="https://img.icons8.com/material-sharp/24/000000/visible.png"/>
+      </div>
+    </div>
+  
     <div class="box form_title">
       <div id="title"></div>
       <div id="desc"></div>
@@ -181,7 +190,7 @@
       });
 
       if(roll_arr.length == 0){
-        document.querySelector('.roll').style.display= "none"
+        document.querySelector('.roll').style.display = "none"
         console.log("There are no responses")
         return;
       }
@@ -291,6 +300,16 @@
       }).catch(e => {
         console.log('error uploading' + e);
       })
+  }
+
+  function viewResponses(){
+    if(roll_arr.length == 0){
+      alert("There are no responses for this form!")
+    }
+    else{
+      
+    }
+    console.log("getting responses")
   }
 
 </script>
