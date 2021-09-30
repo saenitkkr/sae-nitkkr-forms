@@ -6,7 +6,7 @@
     </div>
 
     <form id="main">
-      {{!-- <input type="number" min="1" class="ID" data-id="ok" placeholder="Roll Number"> --}}
+      
     </form>
 
     {{!-- button to navigate from one response to other --}}
@@ -25,21 +25,17 @@
 
 <script>
   const params = (new URL(document.location)).searchParams;
-  //var form_title=params.get('form_title');
-  //console.log(params.get('form_title'));
   var decrypted = params.get('form_title');
   var form_title = decrypted;
-
 
   let mainContainer = document.getElementById("main");
   const title = document.querySelector('#title');
   const desc = document.querySelector('#desc');
   title.innerHTML = form_title;
 
-  function fn(bool, e) { //console.log(bool);
+  function fn(bool, e) { 
     if (bool) {
       additional.childNodes[1].innerHTML += `<span class='star'>*</span>`;
-      //console.log(additional.childNodes[3].className);
       if (additional.className != "mcqType box") {
         additional.childNodes[3].setAttribute("data-id", "ok");
       }
