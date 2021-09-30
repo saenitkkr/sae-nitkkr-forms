@@ -1,5 +1,4 @@
 var exphbs = require('express-handlebars')
-const port = 5001 || process.env.PORT;
 const express = require('express')
 const path = require('path')
 var bodyParser = require("body-parser");
@@ -7,7 +6,6 @@ var cookieParser = require("cookie-parser");
 var session = require("express-session");
 var morgan = require("morgan");
 var firebase = require("firebase");
-const { format } = require('path');
 const app = express()
 
 const session_time = 1000 * 60 * 60 * 24 * 1;
@@ -21,6 +19,9 @@ var firebaseConfig = {
   appId: "1:1074719455050:web:42703119681390e56033b3",
   measurementId: "G-T7X5WRL1GS"
 };
+
+const port = process.env.PORT || 5001;
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
@@ -114,8 +115,6 @@ app.get('/response', (req, res) => {
 
 
 
-
-
 app.post('/', redirectHome, (req, res) => {
   const { name, password } = req.body;
   console.log(name, password);
@@ -149,5 +148,5 @@ app.set('view engine','handlebars');
 app.use(express.static(path.join(__dirname,"static")))
 
 app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`)
+    console.log(`Example app listening at ${port}`)
 })
