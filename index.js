@@ -113,8 +113,6 @@ app.get('/response', (req, res) => {
   });
 })
 
-
-
 app.post('/', redirectHome, (req, res) => {
   const { name, password } = req.body;
   console.log(name, password);

@@ -166,17 +166,6 @@
     cursor: pointer;
   }
         
-  /* .toggle:after {
-    content: '';
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background-color: gray;
-    top: -3px; 
-    left: -3px;
-    transition:  all 0.5s;
-  } */
   .toggleHelper {
     content: '';
     position: absolute;
@@ -188,15 +177,7 @@
     left: -3px;
     transition:  all 0.5s;
   }
-     
-  /* .checkbox:checked + .toggle::after {
-    left : 17px; 
-  }
-  
-  .checkbox:checked + .toggle {
-    background-color: rgb(111, 217, 243);
-    border: 2px solid rgb(111, 217, 243);
-  } */
+
   
   .checkbox { 
     display : none;
@@ -214,11 +195,14 @@
   }
   
   .plus{
-  cursor: pointer;
   font-size: 25px;
-  /* margin-left: 120px;  */
   padding:5px;
   color: rgb(136, 135, 135);
+  }
+
+  .plus .fa{
+    font-size: 18px;
+    cursor: pointer;
   }
   .plus:hover{
   color:black;
@@ -265,6 +249,13 @@
   border-radius: 10px;
   cursor: pointer;
   }
+
+  .create-button:hover{
+    background-color: rgb(9, 138, 9);
+  }
+  .cancel-button:hover{
+    background-color: rgb(221, 31, 31);
+  }
   .up,.down{
     padding:10px;
     color: gray;
@@ -288,8 +279,34 @@
   
   .create-button{
   background-color: green;
-  
   }
+
+  .response-cont #title{
+    font-size: 20px;
+  }
+
+  .response-cont #desc{
+    font-size: 14px;
+    color:rgb(66, 65, 65);
+  }
+
+  .loader {
+    border: 5px solid #f3f3f3; /* Light grey */
+    border-top: 5px solid #1a7008; /* Blue */
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    animation: spin 2s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
   @media screen and (max-width: 1050px) {
   .container{
     padding-top: 50px;
@@ -321,6 +338,7 @@
   }
   
   .prik{
+    color:rgb(68, 67, 67);
     display: flex;
     flex-direction: row;
     justify-content: left;
@@ -331,6 +349,9 @@
   }
   .mcqType p{
    margin:0;    
+  }
+  .res-opts{
+    font-size: 14px;
   }
   /* .prik p{
     margin: 0px;

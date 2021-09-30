@@ -1,10 +1,12 @@
 <div onload="doSetup()">
-  <div class="container">
+  <div class="response-cont container">
     <div class="box form_title">
       <div id="title"></div>
       <div id="desc"></div>
     </div>
-
+      <div class="loader">
+           
+        </div>
     <form id="main">
       
     </form>
@@ -39,8 +41,6 @@
       if (additional.className != "mcqType box") {
         additional.childNodes[3].setAttribute("data-id", "ok");
       }
-
-
     }
   }
 
@@ -51,7 +51,6 @@
   }).catch((error) => {
     console.log("Error getting document:", error);
   });
-
 
   const left = document.querySelector("#left");
   const right = document.querySelector("#right");
@@ -64,45 +63,34 @@
   var count = 2, count_ans = 0; //to count no of ques and their ans
   var response = 0; //to show the next response
 
-
   additional = document.createElement("div");
   additional.className = 'ID';
   additional.innerHTML += `
-          <p type="number" min="1" data-id="ok" placeholder="Roll Number"></p>
+          <p type="number" class="roll" min="1" data-id="ok" placeholder="Roll Number"></p>
                              `
   mainContainer.appendChild(additional);
 
-
+  //extract questions
   docRef.collection("hi").get()
     .then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        //console.log(doc.id, " => ", doc.data());
         var curr = doc.id;
         var len = curr.length;
-
 
         if (curr[len - 1] == 'T') {
           var qs = doc.data().qs;
 
-          //console.log(qs);
           additional = document.createElement("div");
           additional.className = 'textType';
           additional.innerHTML += `
-    
-                      <p class="hi">Hi </p>
-                      <p class="hi"> hi </p>
-
-
-
+                      <p class="hi">  </p>
+                      <div class="sample-text">
+                            Type your answer here
+                          </div>
                       <div class="seperator">
                        
-                      </div>
-                        <div class="question-control">
-
-
-          
-                        </div></i></div>
+                      <div class="question-control">
+                         
                       </div>
                        `
 
@@ -110,64 +98,38 @@
           mainContainer.appendChild(additional);
 
           mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
-
-          //mainContainer.childNodes[count].childNodes[3].innerHTML = ans[count_ans];
           fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
-
-
-
           count++;
-          //count_ans++;
-
-
         }
 
         if (curr[len - 1] == 'U') {
           var qs = doc.data().qs;
-
-          //console.log(qs);
           additional = document.createElement("div");
           additional.className = 'uploadType';
           additional.innerHTML = `
     
                     <p class="hi">Hi</p>
-                    <a href=" " id="pdf" target="_blank">Click to open </a>
-
-        
-      
-       
-      
+                     <div class="sample-text">
+                      Upload file
+                    </div>
                     <div class="seperator">
 
                     </div>
                     <div class="question-control">
      
-        
-       
-          
-                       </div></i></div>
                     </div>
-                    `
-
-
+                    `;
+                    {{!-- <a href=" " id="pdf" target="_blank">Click to open </a> --}}
           additional.classList.add("box");
           mainContainer.appendChild(additional);
 
           mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
           fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
-
-
-
           count++;
-          //count_ans++;
-
-
         }
 
         if (curr[len - 1] == 'O') {
           var qs = doc.data().qs;
-
-          //console.log(qs);
           additional = document.createElement("div");
 
           additional.className = "mcqType";
@@ -181,66 +143,48 @@
                     </div>
                     <div class="seperator"></div>
                     <div class="question-control">
-                    
-        
-        
-          
-                      </div></i></div>
+  
                     </div>`
           additional.classList.add("box");
           mainContainer.appendChild(additional);
           mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
-          // console.log(mainContainer.childNodes[count].childNodes[1]);
-
 
           fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
           var option = doc.data().op;
-          //  console.log(option);
           for (var i = 1; i <= option.length; i++) {
             var data = document.createElement('div');
             data.className = "prik";
-            // var p2 = document.createElement('input');
-            //p2.type = "checkbox";
-
-
-
-            // p2.innerHTML=i+")    "+option[i-1];
-
-
-            // p2.name = "options_here"
             var opt = document.createElement('p');
-            opt.innerHTML = "    " + option[i - 1];
-            //data.appendChild(p2);
+            opt.classList.add('res-opts');
+            opt.innerHTML = "  "+i+") " + option[i - 1];
             data.appendChild(opt);
-
-
-            //console.log(mainContainer.childNodes[count].childNodes[3].childNodes[1]);
             mainContainer.childNodes[count].childNodes[3].childNodes[1].appendChild(data);
-
           }
-
           count++;
-
         }
-
-
       });
+      document.querySelector('.loader').style.display = "none";
     })
     .catch((error) => {
       console.log("Error getting documents: ", error);
     });
 
+{{!-- end --}}
 
 
-
-  db.collection('form').doc(title.innerHTML).collection("ans").get()
+  //extract first answer
+  docRef.collection('ans_1').get()
     .then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
         roll_arr[i] = doc.id;
         i++;
       });
 
+      if(roll_arr.length == 0){
+        document.querySelector('.roll').style.display= "none"
+        console.log("There are no responses")
+        return;
+      }
 
       window.onload = getanswer(response);
 
@@ -254,7 +198,6 @@
           else {
             window.alert("you are at the last response");
           }
-
         });
 
       left.addEventListener('click',
@@ -276,7 +219,6 @@
         mainContainer.childNodes[1].childNodes[1].innerHTML = roll_arr[response];
         count++;
 
-
         db.collection("form").doc(title.innerHTML).collection("ans").doc(roll_arr[response]).collection("ans_1").get()
           .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
@@ -286,16 +228,13 @@
 
             });
 
-
             for (var k = 0; k < ansid.length; k++) {
               var curr = ansid[k];
               var l = curr.length;
-              //console.log(curr[l - 1]);
 
               if (curr[l - 1] == 'T') {
                 textans(count_ans, count);
                 count_ans++, count++;
-
               }
               if (curr[l - 1] == 'O') {
                 optans(count_ans, count);
@@ -306,21 +245,13 @@
                 count_ans++, count++;
               }
             }
-
           });
-
       } //end of getanswer();
-
     });
 
-
   function textans(count_ans, count) {
-
     mainContainer.childNodes[count].childNodes[3].innerHTML = ans[count_ans];
-    //console.log(mainContainer.childNodes[count].childNodes[3]);
-
   }
-
 
   function optans(count_ans, count) {
     var op_ans = [];
@@ -344,7 +275,6 @@
   }
 
 
-
   function uploadans(count_ans, count) {
 
     let num = count_ans + 1;
@@ -352,7 +282,6 @@
     let storageRef = firebase.storage().ref(title.innerHTML + "/" + roll_arr[response] + "/" + num);
     let this_ref = storageRef.child('ans');
 
-    //console.log(mainContainer.childNodes[count].childNodes[1].nextSibling.nextSibling);
     var pdf = mainContainer.childNodes[count].childNodes[1].nextSibling.nextSibling;
     this_ref.getDownloadURL()
       .then((url) => {
@@ -363,7 +292,5 @@
         console.log('error uploading' + e);
       })
   }
-
-  // });
 
 </script>
