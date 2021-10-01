@@ -273,25 +273,15 @@
 
   function null_check() {
     var text_feilds = document.getElementsByClassName("nullCheck");
-    // console.log (text_feilds.length);
+ 
     for (var i = 0; i < text_feilds.length; i++) {
-      //console.log(text_feilds[i].value);
       if (text_feilds[i].value == "") {
-        // alert("fill up");
         text_feilds[i].scrollIntoView({ behavior: 'smooth', block: 'end' });
-
         alert("fill up");
-
         return false;
-
       }
-
-
-
     }
     return true;
-
-
   }
 
   var previous_roll_no = [];
@@ -300,19 +290,14 @@
     querySnapshot.forEach((doc) => {
       var p = doc.id;
       previous_roll_no.push(p);
-      ///  console.log(p+" "+previous_roll_no.length);
-
-    })
-  })
+    });
+  });
 
   var roll_number = document.getElementById("title");
 
 
-  //body.addEventListener("load",init())
-
 
   function previous_roll_check() {
-    //console.log(previous_roll_no.length);
     for (var i = 0; i < previous_roll_no.length; i++) {
       if (roll_number.value == previous_roll_no[i]) {
         roll_number.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -333,14 +318,12 @@
   var yyyy = today.getFullYear();
 
   today = mm + '/' + dd + '/' + yyyy;
-  //console.log(today);
+  
   button.addEventListener('click',
     (e) => {
       var ch = null_check();
-      // console.log(ch);
+     
       if (ch && previous_roll_check()) {
-        //console.log("why im here");
-        //console.log(title.value);
         db.collection('form').doc(title.value).set({
           desc: desc.value,
           date: today,
@@ -352,9 +335,7 @@
           //text type
           if (child.className == 'textType box') {
             var temp = count + "_T";
-            //for(var i=1;child.childNodes[7].childNodes[i]!=null;i++)
-            // console.log(child.childNodes[7].childNodes[5].childNodes[3].checked);
-            // console.log( child.childNodes[7].childNodes[5].childNodes[3].checked);
+    
             db.collection('form').doc(title.value).collection("hi").doc(temp).set({
               qs: child.childNodes[1].value,
               req: child.childNodes[7].childNodes[5].childNodes[3].checked
@@ -377,7 +358,7 @@
               if (num == 1)
                 num += 1;
             }
-            //console.log(child.childNodes[9].childNodes[5].childNodes[3].checked);
+           
             db.collection('form').doc(title.value).collection("hi").doc(temp).set({
               qs: child.childNodes[1].value,
               op: l,
@@ -388,9 +369,7 @@
 
           //upload file
           if (child.className == 'uploadType box') {
-            var temp = count + "_U";
-
-            //console.log(child.childNodes[7].childNodes[5].childNodes[3].checked);
+            var temp = count + "_U";            
             db.collection('form').doc(title.value).collection("hi").doc(temp).set({
               qs: child.childNodes[1].value,
               req: child.childNodes[7].childNodes[5].childNodes[3].checked
@@ -402,14 +381,15 @@
 
 
         }
-        document.write(`   <div style="background-color: rgb(239, 241, 231); border: 2px solid green;  ">Great!
-    Your form is successfully created.</div>`);
+        document.write(` <div class="container">
+        <div class="box form_title" style="background-color: rgb(239, 241, 231); border: 2px solid green; padding-left: 10px;">
+        <h1>Great! Your form has successfully created.</h1>
+        <p>Go to "Your Forms" page to manage your form.</p>
+        </div>
+        </div>`);
       }
 
-
     }
-
-
 
   );
 

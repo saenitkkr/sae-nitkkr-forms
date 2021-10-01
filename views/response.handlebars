@@ -2,34 +2,24 @@
   <div class="response-cont container">
     <div class="res-operator">
       {{!-- <div class="form-edit" title="edit form">
-        <img src="https://img.icons8.com/material-outlined/24/000000/edit--v1.png"/>
+        <img src="https://img.icons8.com/material-outlined/24/000000/edit--v1.png" />
       </div> --}}
       <div class="see-responses" title="see all responses" onclick="viewResponses()">
-        <img src="https://img.icons8.com/material-sharp/24/000000/visible.png"/>
+        <img src="https://img.icons8.com/material-sharp/24/000000/visible.png" />
       </div>
     </div>
-  
+
     <div class="box form_title">
       <div id="title"></div>
       <div id="desc"></div>
     </div>
-      <div class="loader">
-           
-        </div>
-    <form id="main">
-      
-    </form>
 
-    {{!-- button to navigate from one response to other --}}
-    <div style="display: flex; justify-content: center; align-items: center; padding: 20px;">
-      <button class="toggle-response" type="submit" id="left" style="margin: 20px 20px;">
-        <i class="fa fa-arrow-left" aria-hidden="true"></i>
-      </button>
+    <div class="loader">
 
-      <button class="toggle-response" type="submit" id="right" style="margin: 20px 20px;">
-        <i class="fa fa-arrow-right" aria-hidden="true"></i>
-      </button>
     </div>
+    <form id="main">
+
+    </form>
 
   </div>
 </div>
@@ -44,14 +34,16 @@
   const desc = document.querySelector('#desc');
   title.innerHTML = form_title;
 
-  function fn(bool, e) { 
+ //to check required field
+  function fn(bool, e) {
     if (bool) {
       additional.childNodes[1].innerHTML += `<span class='star'>*</span>`;
       if (additional.className != "mcqType box") {
         additional.childNodes[3].setAttribute("data-id", "ok");
       }
     }
-  }
+  }//end
+  
 
   var docRef = db.collection('form').doc(title.innerHTML);
   docRef.get().then((doc) => {
@@ -61,23 +53,10 @@
     console.log("Error getting document:", error);
   });
 
-  const left = document.querySelector("#left");
-  const right = document.querySelector("#right");
   const main = document.querySelector("#main");
-
-
   var roll_arr = []; //to save roll number
-  var ans = [], ansid = []; //to save answer
-  var i = 0, j = 0; //to save values in ans and roll_arr
-  var count = 2, count_ans = 0; //to count no of ques and their ans
-  var response = 0; //to show the next response
-
-  additional = document.createElement("div");
-  additional.className = 'ID';
-  additional.innerHTML += `
-          <p type="number" class="roll" min="1" data-id="ok" placeholder="Roll Number"></p>
-                             `
-  mainContainer.appendChild(additional);
+  var i = 0; //to save values in roll_arr
+  var count = 1; //to count no of ques and their ans
 
   //extract questions
   docRef.collection("hi").get()
@@ -128,7 +107,7 @@
      
                     </div>
                     `;
-                    {{!-- <a href=" " id="pdf" target="_blank">Click to open </a> --}}
+
           additional.classList.add("box");
           mainContainer.appendChild(additional);
 
@@ -165,7 +144,7 @@
             data.className = "prik";
             var opt = document.createElement('p');
             opt.classList.add('res-opts');
-            opt.innerHTML = "  "+i+") " + option[i - 1];
+            opt.innerHTML = "  " + i + ") " + option[i - 1];
             data.appendChild(opt);
             mainContainer.childNodes[count].childNodes[3].childNodes[1].appendChild(data);
           }
@@ -178,138 +157,26 @@
       console.log("Error getting documents: ", error);
     });
 
-{{!-- end --}}
+//end
 
 
-  //extract first answer
-  docRef.collection('ans_1').get()
+  //extract total number of responses
+  docRef.collection('ans').get()
     .then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         roll_arr[i] = doc.id;
         i++;
       });
-
-      if(roll_arr.length == 0){
-        document.querySelector('.roll').style.display = "none"
-        console.log("There are no responses")
-        return;
-      }
-
-      window.onload = getanswer(response);
-
-      right.addEventListener('click',
-        (e) => {
-          var lg = roll_arr.length;
-          if (response < lg - 1) {
-            response++;
-            getanswer(response);
-          }
-          else {
-            window.alert("you are at the last response");
-          }
-        });
-
-      left.addEventListener('click',
-        (e) => {
-          if (response > 0) {
-            response--;
-            getanswer(response);
-          }
-          else {
-            window.alert("you are at the first response");
-          }
-
-        });
-
-      function getanswer(response) {
-        count_ans = 0, count = 1;
-        ans = []; j = 0;
-
-        mainContainer.childNodes[1].childNodes[1].innerHTML = roll_arr[response];
-        count++;
-
-        db.collection("form").doc(title.innerHTML).collection("ans").doc(roll_arr[response]).collection("ans_1").get()
-          .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-              ansid[j] = doc.id;
-              ans[j] = doc.data().ans;
-              j++;
-
-            });
-
-            for (var k = 0; k < ansid.length; k++) {
-              var curr = ansid[k];
-              var l = curr.length;
-
-              if (curr[l - 1] == 'T') {
-                textans(count_ans, count);
-                count_ans++, count++;
-              }
-              if (curr[l - 1] == 'O') {
-                optans(count_ans, count);
-                count_ans++, count++;
-              }
-              if (curr[l - 1] == 'U') {
-                uploadans(count_ans, count);
-                count_ans++, count++;
-              }
-            }
-          });
-      } //end of getanswer();
     });
 
-  function textans(count_ans, count) {
-    mainContainer.childNodes[count].childNodes[3].innerHTML = ans[count_ans];
-  }
 
-  function optans(count_ans, count) {
-    var op_ans = [];
-    op_ans = ans[count_ans];
-
-
-    var indi = mainContainer.childNodes[count].childNodes[3].childNodes[1];
-
-    for (var k = 0; k < op_ans.length; k++) {
-
-      if (op_ans[k] == true) {
-
-        indi.childNodes[k + 1].childNodes[0].style.color = "blue";
-      }
-      if (op_ans[k] == false) {
-
-        indi.childNodes[k + 1].childNodes[0].style.color = "black";
-      }
-
-    }
-  }
-
-
-  function uploadans(count_ans, count) {
-
-    let num = count_ans + 1;
-    console.log(count_ans, count);
-    let storageRef = firebase.storage().ref(title.innerHTML + "/" + roll_arr[response] + "/" + num);
-    let this_ref = storageRef.child('ans');
-
-    var pdf = mainContainer.childNodes[count].childNodes[1].nextSibling.nextSibling;
-    this_ref.getDownloadURL()
-      .then((url) => {
-        pdf.setAttribute("href", url);
-        console.log(pdf);
-
-      }).catch(e => {
-        console.log('error uploading' + e);
-      })
-  }
-
-  function viewResponses(){
-    if(roll_arr.length == 0){
+  function viewResponses() {
+    if (roll_arr.length == 0) {
       alert("There are no responses for this form!")
     }
-    else{
-      
+    else {
+      window.location.href = "/view_response?form_title=" + form_title;
     }
-    console.log("getting responses")
   }
 
 </script>

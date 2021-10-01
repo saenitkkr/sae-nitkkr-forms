@@ -281,11 +281,11 @@
   background-color: green;
   }
 
-  .response-cont #title{
+   #title{
     font-size: 20px;
   }
 
-  .response-cont #desc{
+   #desc{
     font-size: 14px;
     color:rgb(66, 65, 65);
   }

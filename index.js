@@ -112,6 +112,11 @@ app.get('/response', (req, res) => {
     style: 'newForm.css'
   });
 })
+app.get('/view_response', (req, res) => {
+  res.render('view_response', {
+    style: 'newForm.css'
+  });
+})
 
 app.post('/', redirectHome, (req, res) => {
   const { name, password } = req.body;

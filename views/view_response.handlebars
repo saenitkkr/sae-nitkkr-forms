@@ -1,0 +1,281 @@
+<div onload="doSetup()">
+    <div class="container">
+        <div class="box form_title">
+            <div id="title"></div>
+            <div id="desc"></div>
+        </div>
+        <div class="loader">
+
+        </div>
+        <form id="main">
+
+        </form>
+
+        {{!-- button to navigate from one response to other --}}
+        <div style="display: flex; justify-content: center; align-items: center; padding: 20px;">
+            <button class="toggle-response" type="submit" id="left" style="margin: 20px 20px;">
+                <i class="fa fa-arrow-left" aria-hidden="true"></i>
+            </button>
+            <span id="res_no" style="font-size:23px;">1</span>
+            <button class="toggle-response" type="submit" id="right" style="margin: 20px 20px;">
+                <i class="fa fa-arrow-right" aria-hidden="true"></i>
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    const params = (new URL(document.location)).searchParams;
+    var decrypted = params.get('form_title');
+    var form_title = decrypted;
+
+    let mainContainer = document.getElementById("main");
+    const title = document.querySelector('#title');
+    const desc = document.querySelector('#desc');
+    title.innerHTML = form_title;
+
+//to check required field
+    function fn(bool, e) {
+        if (bool) {
+            additional.childNodes[1].innerHTML += `<span class='star'>*</span>`;
+            if (additional.className != "mcqType box") {
+                additional.childNodes[3].setAttribute("data-id", "ok");
+            }
+        }
+    }//end
+   
+    var docRef = db.collection('form').doc(title.innerHTML);
+    docRef.get().then((doc) => {
+        desc.innerHTML = doc.data().desc;
+
+    }).catch((error) => {
+        console.log("Error getting document:", error);
+    });
+
+    const left = document.querySelector("#left");
+    const right = document.querySelector("#right");
+    const main = document.querySelector("#main");
+    var res_no = document.querySelector("#res_no")
+
+
+    var roll_arr = []; //to save roll number
+    var ans = [], ansid = []; //to save answer
+    var i = 0, j = 0; //to save values in ans and roll_arr
+    var count = 2, count_ans = 0; //to count no of ques and their ans
+    var response = 0; //to show the next response
+
+    additional = document.createElement("div");
+    additional.className = 'ID';
+    additional.innerHTML += `
+          <p type="number" class="roll" min="1" data-id="ok" placeholder="Roll Number"></p>
+                             `;
+    mainContainer.appendChild(additional);
+
+    //extract questions
+    docRef.collection("hi").get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                var curr = doc.id;
+                var len = curr.length;
+
+                if (curr[len - 1] == 'T') {
+                    var qs = doc.data().qs;
+
+                    additional = document.createElement("div");
+                    additional.className = 'textType';
+                    additional.innerHTML += `
+                      <p class="hi">  </p>
+                      <div class="sample-text">
+                            Type your answer here
+                      </div>
+
+                      <div class="seperator"></div>
+
+                      <div class="question-control"></div>
+                       `;
+
+                    additional.classList.add("box");
+                    mainContainer.appendChild(additional);
+
+                    mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
+                    fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
+                    count++;
+                }
+
+                if (curr[len - 1] == 'U') {
+                    var qs = doc.data().qs;
+                    additional = document.createElement("div");
+                    additional.className = 'uploadType';
+                    additional.innerHTML = `
+    
+                    <p class="hi">Hi</p>
+                      <a href=" " id="pdf" target="_blank" style="text-decoration: none">Click to open </a>
+
+                    <div class="seperator"></div>
+
+                    <div class="question-control"></div>
+                    `;
+
+                    additional.classList.add("box");
+                    mainContainer.appendChild(additional);
+
+                    mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
+                    fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
+                    count++;
+                }
+
+                if (curr[len - 1] == 'O') {
+                    var qs = doc.data().qs;
+                    additional = document.createElement("div");
+
+                    additional.className = "mcqType";
+                    additional.innerHTML = `
+                    <p class="hi">Hi</p>
+     
+                    <div id="possible">
+                      <div class="indivisual">
+                      </div>
+                    </div>
+
+                    <div class="seperator"></div>
+                    <div class="question-control"></div>`;
+
+                    additional.classList.add("box");
+                    mainContainer.appendChild(additional);
+                    mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
+
+                    fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
+                    var option = doc.data().op;
+                    for (var i = 1; i <= option.length; i++) {
+                        var data = document.createElement('div');
+                        data.className = "prik";
+                        var opt = document.createElement('p');
+                        opt.classList.add('res-opts');
+                        opt.innerHTML = "  " + i + ") " + option[i - 1];
+                        data.appendChild(opt);
+                        mainContainer.childNodes[count].childNodes[3].childNodes[1].appendChild(data);
+                    }
+                    count++;
+                }
+            });
+            document.querySelector('.loader').style.display = "none";
+        })
+        .catch((error) => {
+            console.log("Error getting documents: ", error);
+        });
+
+    //end
+
+
+    //extract first answer
+    docRef.collection('ans').get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                roll_arr[i] = doc.id;
+                i++;
+            });
+
+            window.onload = getanswer(response);
+
+            right.addEventListener('click',
+                (e) => {
+                    var lg = roll_arr.length;
+                    if (response < lg - 1) {
+                        response++;
+                        getanswer(response);
+                    }
+                    else {
+                        window.alert("you are at the last response");
+                    }
+                });
+
+            left.addEventListener('click',
+                (e) => {
+                    if (response > 0) {
+                        response--;
+                        getanswer(response);
+                    }
+                    else {
+                        window.alert("you are at the first response");
+                    }
+
+                });
+
+            function getanswer(response) {
+                count_ans = 0, count = 1;
+                ans = []; j = 0;
+
+                mainContainer.childNodes[1].childNodes[1].innerHTML = roll_arr[response];
+                res_no.innerHTML = response + 1;
+                count++;
+
+                db.collection("form").doc(title.innerHTML).collection("ans").doc(roll_arr[response]).collection("ans_1").get()
+                    .then((querySnapshot) => {
+                        querySnapshot.forEach((doc) => {
+                            ansid[j] = doc.id;
+                            ans[j] = doc.data().ans;
+                            j++;
+
+                        });
+
+                        for (var k = 0; k < ansid.length; k++) {
+                            var curr = ansid[k];
+                            var l = curr.length;
+
+                            if (curr[l - 1] == 'T') {
+                                textans(count_ans, count);
+                                count_ans++, count++;
+                            }
+                            if (curr[l - 1] == 'O') {
+                                optans(count_ans, count);
+                                count_ans++, count++;
+                            }
+                            if (curr[l - 1] == 'U') {
+                                uploadans(count_ans, count);
+                                count_ans++, count++;
+                            }
+                        }
+                    });
+            } //end of getanswer();
+        });
+
+    function textans(count_ans, count) {
+        mainContainer.childNodes[count].childNodes[3].innerHTML = ans[count_ans];
+    }
+
+    function optans(count_ans, count) {
+        var op_ans = [];
+        op_ans = ans[count_ans];
+
+        var indi = mainContainer.childNodes[count].childNodes[3].childNodes[1];
+        for (var k = 0; k < op_ans.length; k++) {
+            if (op_ans[k] == true) {
+                indi.childNodes[k + 1].childNodes[0].style.color = "blue";
+            }
+            if (op_ans[k] == false) {
+                indi.childNodes[k + 1].childNodes[0].style.color = "black";
+            }
+        }
+    }
+
+
+    function uploadans(count_ans, count) {
+
+        let num = count_ans + 1;
+        let storageRef = firebase.storage().ref(title.innerHTML + "/" + roll_arr[response] + "/" + num);
+        let this_ref = storageRef.child('ans');
+
+        var pdf = mainContainer.childNodes[count].childNodes[1].nextSibling.nextSibling;
+        this_ref.getDownloadURL()
+            .then((url) => {
+                pdf.setAttribute("href", url);
+                console.log(pdf);
+            }).catch(e => {
+                console.log('error uploading' + e);
+            })
+    }
+
+
+</script>
