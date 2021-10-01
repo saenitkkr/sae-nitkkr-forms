@@ -1,17 +1,9 @@
 <div onload="doSetup()">
     <div class="container">
-        <div class="box form_title">
-            <div id="title"></div>
-            <div id="desc"></div>
+        <div class="num-responses">
+            
         </div>
-        <div class="loader">
-
-        </div>
-        <form id="main">
-
-        </form>
-
-        {{!-- button to navigate from one response to other --}}
+         {{!-- button to navigate from one response to other --}}
         <div style="display: flex; justify-content: center; align-items: center; padding: 20px;">
             <button class="toggle-response" type="submit" id="left" style="margin: 20px 20px;">
                 <i class="fa fa-arrow-left" aria-hidden="true"></i>
@@ -22,6 +14,16 @@
             </button>
         </div>
 
+        <div class="box form_title">
+            <div id="title"></div>
+            <div id="desc"></div>
+        </div>
+        <div class="loader">
+
+        </div>
+        <form id="main">
+
+        </form>
     </div>
 </div>
 
@@ -160,7 +162,6 @@
                     count++;
                 }
             });
-            document.querySelector('.loader').style.display = "none";
         })
         .catch((error) => {
             console.log("Error getting documents: ", error);
@@ -207,7 +208,7 @@
                 count_ans = 0, count = 1;
                 ans = []; j = 0;
 
-                mainContainer.childNodes[1].childNodes[1].innerHTML = roll_arr[response];
+                mainContainer.childNodes[1].childNodes[1].innerHTML = "Roll Number: " + roll_arr[response];
                 res_no.innerHTML = response + 1;
                 count++;
 
@@ -238,6 +239,8 @@
                             }
                         }
                     });
+                    document.querySelector('.loader').style.display = "none";
+                    document.querySelector('.num-responses').textContent = "Total responses: " + roll_arr.length;
             } //end of getanswer();
         });
 

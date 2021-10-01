@@ -325,6 +325,16 @@
     /* margin-left: 80px; */
   }
 
+  .toggle-response{
+    cursor: pointer;
+  }
+  .ID{
+    background-color: rgb(243, 245, 235);
+    border-radius: 12px;
+    margin-top:10px;
+    padding-left:25px;
+    color:rgb(82, 75, 75);
+  }
   @media screen and (max-width: 1050px) {
   .container{
     padding-top: 50px;
