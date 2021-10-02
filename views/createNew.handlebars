@@ -192,6 +192,10 @@
       </div>
       <div class="seperator"></div>
       <div class="question-control">
+        <div class="opt-type">
+          <label for="type">single correct</label>
+          <input type="checkbox" id="type" name="type"></input>
+        </div>
         <button class="up" onclick="upar(parentNode.parentNode)" type="button"><i class="fa fa-arrow-up" aria-hidden="true"></i></button>
         <button class="down" onclick="niche(parentNode.parentNode)" type="button"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>
         <div class="required">
@@ -321,10 +325,12 @@
                   num += 1;
               }
             
+              var mcqt = (child.childNodes[9].childNodes[1].childNodes[3].checked)?'single':'multiple'
               db.collection('form').doc(title.value).collection("hi").doc(temp).set({
                 qs: child.childNodes[1].value,
                 op: l,
-                req: child.childNodes[9].childNodes[5].childNodes[3].checked
+                req: child.childNodes[9].childNodes[7].childNodes[3].checked,
+                type: mcqt
               });
               count++;
             }

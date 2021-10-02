@@ -67,7 +67,19 @@
       padding: 5px 5px;
       color:black;
     }
-  
+  .opt-type{
+    width: 200px;
+    margin-bottom: 30px;
+  }
+  .opt-type label{
+    font-weight: normal;
+    color:rgb(66, 65, 65);
+    float: left;
+    font-size: 14px;
+  }
+  .opt-type input{
+    width: 20px;
+  }
   .form_title input:nth-child(1){
     font-size: 18px;
   }
