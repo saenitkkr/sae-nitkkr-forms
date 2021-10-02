@@ -6,7 +6,7 @@
     </div>
 
     <form id="main">
-      <input type="number" min="1" class="ID" id="op" data-id="ok" placeholder="Roll Number">
+      <input type="number" min="1" class="ID" id="op" data-id="ok" placeholder="Roll Number" required>
     </form>
      <div class="loader">
            
@@ -30,6 +30,26 @@
   const desc = document.querySelector('#desc');
   title.innerHTML = form_title;
  
+ let getAllOpts = function (e) {
+    let siblings = []; 
+
+    // if no parent, return no sibling
+    if(!e.parentNode) {
+        return siblings;
+    }
+    // first child of the parent node
+    let sibling  = e.parentNode.parentNode.firstChild;
+    
+    // collecting siblings
+    while (sibling) {
+        if (sibling.nodeType === 1 && sibling !== e) {
+            siblings.push(sibling.firstChild);
+        }
+        sibling = sibling.nextSibling;
+    }
+    return siblings;
+};
+
   function textAreaAdjust(element) {
     element.style.height = "1px";
     element.style.height = (10+element.scrollHeight)+"px";
@@ -177,9 +197,11 @@
 
           fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
           var option = doc.data().op;
+          var oplist = []
           for (var i = 1; i <= option.length; i++) {
             var data = document.createElement('div');
-            data.className = "prik";
+            data.className = "prik"
+            data.classList.add(doc.id)
             var p2 = document.createElement('input');
             p2.type = "checkbox";
             p2.name = "options_here";
@@ -187,9 +209,14 @@
             opt.innerHTML = "    " + option[i - 1];
             data.appendChild(p2);
             data.appendChild(opt);
-
+            oplist.push(p2)
             mainContainer.childNodes[count].childNodes[3].childNodes[1].appendChild(data);
           }
+          oplist.forEach((ol)=>{
+            if(doc.data().type == 'single'){
+              ol.addEventListener('click', checkSelections)
+            }
+          })
           count++;
         }
       });
@@ -198,6 +225,15 @@
     .catch((error) => {
       console.log("Error getting documents: ", error);
     });
+
+    //check for selection for single correct mcq type
+    function checkSelections(evt){
+      var ol = evt.currentTarget
+      var sibs = getAllOpts(ol);
+      sibs.forEach((item) => {
+          if (item !== ol) item.checked = false
+      })
+    }
 </script>
 
 

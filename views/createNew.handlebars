@@ -2,7 +2,6 @@
 
   {{!-- popup msg when a form created --}}
 
-
   <div class="container">
     <div class="box form_title">
       <input type="text" placeholder="Title of form" id="title" class="nullCheck">
@@ -19,28 +18,6 @@
     </div>
 
     <form id="main">
-      {{!-- <div class="box">
-        <input type="text" placeholder="Question">
-        <div class="sample-text">
-          Upload a file
-        </div>
-        <div class="seperator"></div>
-        <div class="question-control">
-          <button class="up" onclick="upar(parentNode.parentNode)" type="button"><i class="fa fa-arrow-up"
-              aria-hidden="true"></i></button>
-          <button class="down" onclick="niche(parentNode.parentNode)" type="button">&nbsp <i class="fa fa-arrow-down"
-              aria-hidden="true"></i></button>
-          <div class="required">
-
-            <span>Required</span>
-            <input type="checkbox" id="switch" class="checkbox" />
-            <label for="switch" class="toggle">
-              <label class="toggleHelper"></label>
-            </label>
-          </div>
-          <div class="delete"><i class="fa fa-trash-o" aria-hidden="true"></i></div>
-        </div>
-      </div> --}}
 
     </form>
 
@@ -68,6 +45,7 @@
       element.parentNode.insertBefore(element, element.previousElementSibling);
     }
   }
+
   //rearrange down
   function niche(element) {
 
@@ -99,12 +77,10 @@
   function setupDeleteButtons() {
     for (gone of deleteButtons) {
       gone.addEventListener('click', (e) => {
-        if (e.target.closest('div.box').remove()) {
-        }
+        e.target.closest('div.box').remove()
       })
     }
   }
-  ////////////////////////////////
 
 
   function hasClass(element, className) {
@@ -252,14 +228,6 @@
   let possible = document.getElementById('possible');
   let options = document.getElementsByClassName('option');
   let gayab = document.getElementsByClassName('indivisual');
-
-
-
-
-</script>
-
-<script>
-
   const form = document.getElementById("main");
   const button = document.querySelector("#submit_form");
   const title = document.getElementById("title");
@@ -273,11 +241,10 @@
 
   function null_check() {
     var text_feilds = document.getElementsByClassName("nullCheck");
- 
     for (var i = 0; i < text_feilds.length; i++) {
       if (text_feilds[i].value == "") {
         text_feilds[i].scrollIntoView({ behavior: 'smooth', block: 'end' });
-        alert("fill up");
+        alert("Some questions are still empty!");
         return false;
       }
     }
@@ -286,7 +253,6 @@
 
   var previous_roll_no = [];
   db.collection("form").get().then((querySnapshot) => {
-
     querySnapshot.forEach((doc) => {
       var p = doc.id;
       previous_roll_no.push(p);
@@ -294,8 +260,6 @@
   });
 
   var roll_number = document.getElementById("title");
-
-
 
   function previous_roll_check() {
     for (var i = 0; i < previous_roll_no.length; i++) {
@@ -307,9 +271,7 @@
       }
     }
     return true;
-
   }
-
 
   var count = 1;
   var today = new Date();
@@ -321,79 +283,73 @@
   
   button.addEventListener('click',
     (e) => {
-      var ch = null_check();
-     
-      if (ch && previous_roll_check()) {
-        db.collection('form').doc(title.value).set({
-          desc: desc.value,
-          date: today,
+      if(document.querySelectorAll('div.box').length > 1){
+        var ch = null_check();
+        if (ch && previous_roll_check()) {
+          db.collection('form').doc(title.value).set({
+            desc: desc.value,
+            date: today,
 
-        });
+          });
 
-        for (var child = form.firstChild; child !== null; child = child.nextSibling) {
+          for (var child = form.firstChild; child !== null; child = child.nextSibling) {
 
-          //text type
-          if (child.className == 'textType box') {
-            var temp = count + "_T";
-    
-            db.collection('form').doc(title.value).collection("hi").doc(temp).set({
-              qs: child.childNodes[1].value,
-              req: child.childNodes[7].childNodes[5].childNodes[3].checked
+            //text type
+            if (child.className == 'textType box') {
+              var temp = count + "_T";
+      
+              db.collection('form').doc(title.value).collection("hi").doc(temp).set({
+                qs: child.childNodes[1].value,
+                req: child.childNodes[7].childNodes[5].childNodes[3].checked
 
-            });
-            count++;
-          }
-
-          //mcq type
-          if (child.className == 'mcqType box') {
-            var temp = count + "_O";
-            var num = 1;
-            var l = [];
-
-            var n = 0;
-
-            for (var num = 1; child.childNodes[5].childNodes[num] != null; num++) {
-              l[n] = child.childNodes[5].childNodes[num].childNodes[1].value;
-              n++;
-              if (num == 1)
-                num += 1;
+              });
+              count++;
             }
-           
-            db.collection('form').doc(title.value).collection("hi").doc(temp).set({
-              qs: child.childNodes[1].value,
-              op: l,
-              req: child.childNodes[9].childNodes[5].childNodes[3].checked
-            });
-            count++;
+
+            //mcq type
+            if (child.className == 'mcqType box') {
+              var temp = count + "_O";
+              var num = 1;
+              var l = [];
+
+              var n = 0;
+
+              for (var num = 1; child.childNodes[5].childNodes[num] != null; num++) {
+                l[n] = child.childNodes[5].childNodes[num].childNodes[1].value;
+                n++;
+                if (num == 1)
+                  num += 1;
+              }
+            
+              db.collection('form').doc(title.value).collection("hi").doc(temp).set({
+                qs: child.childNodes[1].value,
+                op: l,
+                req: child.childNodes[9].childNodes[5].childNodes[3].checked
+              });
+              count++;
+            }
+
+            //upload file
+            if (child.className == 'uploadType box') {
+              var temp = count + "_U";            
+              db.collection('form').doc(title.value).collection("hi").doc(temp).set({
+                qs: child.childNodes[1].value,
+                req: child.childNodes[7].childNodes[5].childNodes[3].checked
+              });
+              count++;
+            }
           }
-
-          //upload file
-          if (child.className == 'uploadType box') {
-            var temp = count + "_U";            
-            db.collection('form').doc(title.value).collection("hi").doc(temp).set({
-              qs: child.childNodes[1].value,
-              req: child.childNodes[7].childNodes[5].childNodes[3].checked
-            });
-            count++;
-          }
-
-
-
-
+          document.write(` <div class="container">
+          <div class="box form_title" style="background-color: rgb(239, 241, 231); border: 2px solid green; padding-left: 10px;">
+          <h1>Great! Your form has successfully created.</h1>
+          <p>Go to "Your Forms" page to manage your form.</p>
+          </div>
+          </div>`);
         }
-        document.write(` <div class="container">
-        <div class="box form_title" style="background-color: rgb(239, 241, 231); border: 2px solid green; padding-left: 10px;">
-        <h1>Great! Your form has successfully created.</h1>
-        <p>Go to "Your Forms" page to manage your form.</p>
-        </div>
-        </div>`);
       }
-
+      else{
+          alert("There should be atleast one question in a form!")
+      }
     }
-
   );
-
-
-
-
 </script>
