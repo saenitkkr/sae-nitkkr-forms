@@ -8,6 +8,9 @@
     <form id="main">
       <input type="number" min="1" class="ID" id="op" data-id="ok" placeholder="Roll Number">
     </form>
+     <div class="loader">
+           
+        </div>
     <div class="result">
       <div class="create-button" id="submit_form" type="submit">Submit</div>
     </div>
@@ -27,6 +30,10 @@
   const desc = document.querySelector('#desc');
   title.innerHTML = form_title;
  
+  function textAreaAdjust(element) {
+    element.style.height = "1px";
+    element.style.height = (10+element.scrollHeight)+"px";
+  }
   function fn(bool, e) { 
     if (bool) {
       additional.childNodes[1].innerHTML += `<span class='star'>*</span>`;
@@ -103,7 +110,7 @@
           additional.innerHTML += `
     
             <p class="hi">Hi </p>
-            <textarea type="text"  class="sample-text" oncopy="return false" onpaste="return false" oncut="return false" placeholder="Type your answer here" ></textarea>
+            <textarea type="text"  onkeyup="textAreaAdjust(this)" class="sample-text" oncopy="return false" onpaste="return false" oncut="return false" placeholder="Type your answer here" style="width:100%;resize:none;height:50px;"></textarea>
         
             <div class="seperator">
             </div>
@@ -185,8 +192,8 @@
           }
           count++;
         }
-
       });
+      document.querySelector('.loader').style.display="none";
     })
     .catch((error) => {
       console.log("Error getting documents: ", error);
