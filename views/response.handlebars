@@ -135,6 +135,9 @@
                     </div>`
           additional.classList.add("box");
           mainContainer.appendChild(additional);
+          if(doc.data().type == 'single')
+            qs += " <span style='color:rgb(84,79,79); font-size:14px'>(single correct type)</span>"
+          else qs += " <span style='color:rgb(84,79,79); font-size:14px'>(multiple correct type)</span>"
           mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
 
           fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
