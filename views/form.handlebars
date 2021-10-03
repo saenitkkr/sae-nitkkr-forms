@@ -98,7 +98,6 @@
                                     });
                                 });
                         }
-
                     });
 
                 docRef.doc(id).collection("hi").get().then((querySnapshot) => {
@@ -165,7 +164,9 @@
 
     var roll_no = [], answer = [];
     async function im_csv_fn(that) {
+        roll_no = []
         // Await for the promise to resolve
+        console.log(that.parentNode.previousSibling.previousSibling.innerHTML)
         let citiesRef = db.collection("form").doc(that.parentNode.previousSibling.previousSibling.innerHTML).collection("ans");
         let allCities = await citiesRef.get();
         for (const doc of allCities.docs) {
