@@ -155,18 +155,19 @@
   color:white;
   }
   .question-control{
-    width: 200px;
+    width: 250px;
     height: 100px;
-    margin-left:65%;
+    margin-left:60%;
   }
 
-  .copy_question{
+  .copy_question, .add_picture{
     color:rgb(136, 135, 135);
     font-size: 20px;
     padding-top:10px;
     float:left;
     cursor: pointer;
   }
+
   .question-control .required{
     float:left;
     padding-top:15px;
@@ -213,7 +214,7 @@
     width:30px;
     color: rgb(136, 135, 135);
   }
-  .delete:hover, .copy_question:hover{
+  .delete:hover, .copy_question:hover, .add_picture:hover{
     color:black;
   }
   
@@ -296,6 +297,7 @@
   }
   input:focus, textarea:focus{
     border: 2px solid green;
+    border-radius: 5px;
   }
   
   .up:hover,.down:hover{
@@ -388,7 +390,7 @@
   
   @media screen and (max-width: 650px) {
   .question-control{
-    margin-left:50%;
+    margin-left:40%;
 
   }
   }
