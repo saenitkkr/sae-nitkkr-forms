@@ -347,8 +347,9 @@
     float:left;
   }
 
-  .see-responses{
-    /* margin-left: 80px; */
+  .scale{
+    overflow-x: scroll;
+    overflow-y: hidden;
   }
 
   .toggle-response{

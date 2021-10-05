@@ -1,9 +1,9 @@
 <div onload="doSetup()">
     <div class="container">
         <div class="num-responses">
-            
+
         </div>
-         {{!-- button to navigate from one response to other --}}
+        {{!-- button to navigate from one response to other --}}
         <div style="display: flex; justify-content: center; align-items: center; padding: 20px;">
             <button class="toggle-response" type="submit" id="left" style="margin: 20px 20px;">
                 <i class="fa fa-arrow-left" aria-hidden="true"></i>
@@ -38,7 +38,7 @@
     const desc = document.querySelector('#desc');
     title.innerHTML = form_title;
 
-//to check required field
+    //to check required field
     function fn(bool, e) {
         if (bool) {
             additional.childNodes[1].innerHTML += `<span class='star'>*</span>`;
@@ -47,7 +47,7 @@
             }
         }
     }//end
-   
+
     var docRef = db.collection('form').doc(title.innerHTML);
     docRef.get().then((doc) => {
         desc.innerHTML = doc.data().desc;
@@ -161,6 +161,63 @@
                     }
                     count++;
                 }
+
+                if (curr[len - 1] == 'S') {
+                    var qs = doc.data().qs;
+                    var lmin = doc.data().lmin;
+                    var lmax = doc.data().lmax;
+                    var min = doc.data().min;
+                    var max = doc.data().max;
+
+                    additional = document.createElement("div");
+                    additional.className = 'scaleType';
+                    additional.innerHTML += `
+    
+                        <p class="hi">Hi </p>
+                        <div class="scale" style="display:flex; align-items:center; justify-content:center;"> 
+                          <span style="margin-right: 20px;">min</span>
+                          <span style="margin-left: 20px;">max</span>
+                        </div>
+
+           
+
+                        <div class="seperator">
+                        </div>
+                        <div class="question-control">    
+                        </div>
+                        `;
+
+                    additional.classList.add("box");
+                    mainContainer.appendChild(additional);
+                    mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
+                    fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
+
+                    var scale = document.querySelector(".scale");
+                    scale.childNodes[1].innerHTML = lmin;
+                    scale.childNodes[3].innerHTML = lmax;
+                    for (var i = max; i >= min; i--) {
+                        var data = document.createElement('div');
+                        data.className = "linearScale";
+                        data.classList.add(doc.id);
+
+
+
+                        //var opt = document.createElement('input');
+                        //opt.type = "radio";
+                        //opt.name = "scale_opt";
+                        //opt.value = i;
+
+
+                        var optname = document.createElement('p');
+                        optname.innerHTML = i;
+
+                        data.appendChild(optname);
+                        //data.appendChild(opt);
+                        scale.insertBefore(data, scale.childNodes[3]);
+                    }
+                    count++;
+                }
+
             });
         })
         .catch((error) => {
@@ -237,10 +294,14 @@
                                 uploadans(count_ans, count);
                                 count_ans++, count++;
                             }
+                            if (curr[l - 1] == 'S') {
+                                scaleans(count_ans, count);
+                                count_ans++, count++;
+                            }
                         }
                     });
-                    document.querySelector('.loader').style.display = "none";
-                    document.querySelector('.num-responses').textContent = "Total responses: " + roll_arr.length;
+                document.querySelector('.loader').style.display = "none";
+                document.querySelector('.num-responses').textContent = "Total responses: " + roll_arr.length;
             } //end of getanswer();
         });
 
@@ -278,6 +339,22 @@
             }).catch(e => {
                 console.log('error uploading' + e);
             })
+    }
+
+    function scaleans(count_ans, count) {
+        var data = mainContainer.childNodes[count].childNodes[3];
+        for (var i = 3; data.childNodes[i].childNodes[0].childNodes[0] != null; i++) {
+            if (data.childNodes[i].childNodes[0].innerHTML == ans[count_ans]) 
+            {  
+                data.childNodes[i].childNodes[0].style.color = "blue";
+                data.childNodes[i].childNodes[0].style.fontSize = "25px";
+            }
+            else
+            {  
+                data.childNodes[i].childNodes[0].style.color = "black";  
+                data.childNodes[i].childNodes[0].style.fontSize = "20px";  
+            }   
+        }
     }
 
 

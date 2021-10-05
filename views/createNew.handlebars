@@ -16,6 +16,7 @@
       <i class="fa fa-paragraph ic" aria-hidden="true" id="paragraph"></i>
       <i class="fa fa-file ic" aria-hidden="true" id="fileUpload"></i>
       <i class="fa fa-picture-o ic" aria-hidden="true" id="insertImage"></i>
+      <i class="fa fa-sort-numeric-desc" aria-hidden="true" id="linearscale"></i>
     </div>
 
     <form id="main">
@@ -60,6 +61,7 @@
   let addMCQQuestion = document.getElementById('multiple');
   let addParaQuestion = document.getElementById('paragraph');
   let fileUploadQuestion = document.getElementById('fileUpload');
+  let linearScale = document.getElementById('linearscale');
   let mainContainer = document.getElementById("main");
   let body1 = document.getElementsByTagName('body');
   let deleteButtons = document.getElementsByClassName("delete");
@@ -113,6 +115,10 @@
     if(type == 'mcq'){
       n1 = 9
       n2 = 11
+    }
+    if(type == 'scaleType'){
+      n1 = 11
+      n2 = 9
     }
     pr.childNodes[n1].childNodes[n2].addEventListener('click', (evt)=>{
       el = evt.currentTarget.parentNode.parentNode
@@ -299,6 +305,62 @@
     setupToggles();
     setupCopyButtons(additional, "mcq");
   })
+
+linearScale.addEventListener('click', () => {
+    additional = document.createElement("div");
+    additional.className = 'scaleType';
+    additional.innerHTML = `
+      <input type="text" placeholder="Question" class="nullCheck" />
+      <div style="margin: 10px 10px;">
+        <select id="minValue" name="minValue">
+          <option value="0">0</option>
+          <option value="1">1</option>
+        </select>
+        <span> to </span>
+        <select id="maxValue" name="maxValue">
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5" selected="selected">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+        </select>
+      </div>
+
+       <input type="text" id="minLable" placeholder="Lable(min value) optional"/>
+       <input type="text" id="maxLable" placeholder="Lable(max value) optional"/>
+
+      <div class="seperator">
+
+      </div>
+      <div class="question-control">
+        <button class="up" onclick="upar(parentNode.parentNode)" type="button"><i class="fa fa-arrow-up" aria-hidden="true"></i></button>
+        <button class="down" onclick="niche(parentNode.parentNode)" type="button"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>
+        <div class="required">
+          <span>Required</span>
+          <input type="checkbox" id="switch" class="checkbox"  />
+          <label for="switch"  class="toggle" onclick="fn(this)" >
+          <label class="toggleHelper"></label>
+         
+        </label>
+        </div>
+        <div class="delete"><i class="fa fa-trash-o add" aria-hidden="true"></i></div>
+        <div class="copy_question" id="element">
+          <i class="fa fa-clone" aria-hidden="true"></i>
+        </div>
+      </div>
+  `
+    additional.classList.add("box");
+    mainContainer.appendChild(additional);
+    setupDeleteButtons();
+    setupToggles();
+    setupCopyButtons(additional,"scaleType");
+  });
+  
+
   let possible = document.getElementById('possible');
   let options = document.getElementsByClassName('option');
   let gayab = document.getElementsByClassName('indivisual');
@@ -414,6 +476,24 @@
               });
               count++;
             }
+
+            //linear scale
+            if (child.className == 'scaleType box') {
+              var temp = count + "_S";
+              var child2 = child.childNodes[3].childNodes;
+              console.log(child2);
+      
+              db.collection('form').doc(title.value).collection("hi").doc(temp).set({
+                qs: child.childNodes[1].value,
+                min: child.childNodes[3].childNodes[1].value,
+                max: child.childNodes[3].childNodes[5].value,
+                lmin: child.childNodes[5].value,
+                lmax: child.childNodes[7].value,
+                req: child.childNodes[11].childNodes[5].childNodes[3].checked
+              });
+              count++;
+            }
+
           }
           document.write(` <div class="container">
           <div class="box form_title" style="background-color: rgb(239, 241, 231); border: 2px solid green; padding-left: 10px;">
