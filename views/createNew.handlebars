@@ -1,7 +1,6 @@
 <div onload="doSetup()">
 
   {{!-- popup msg when a form created --}}
-
   <div class="container">
     <div class="box form_title">
       <input type="text" placeholder="Title of form" id="title" class="nullCheck">
@@ -438,18 +437,18 @@ linearScale.addEventListener('click', () => {
             date: today,
 
           });
-
+          var promises = []
           for (var child = form.firstChild; child !== null; child = child.nextSibling) {
 
             //text type
             if (child.className == 'textType box') {
               var temp = count + "_T";
       
-              db.collection('form').doc(title.value).collection("hi").doc(temp).set({
+              promises.push(db.collection('form').doc(title.value).collection("hi").doc(temp).set({
                 qs: child.childNodes[1].value,
                 req: child.childNodes[7].childNodes[5].childNodes[3].checked
 
-              });
+              }))
               count++;
             }
 
@@ -469,22 +468,22 @@ linearScale.addEventListener('click', () => {
               }
             
               var mcqt = (child.childNodes[9].childNodes[1].childNodes[3].checked)?'single':'multiple'
-              db.collection('form').doc(title.value).collection("hi").doc(temp).set({
+              promises.push(db.collection('form').doc(title.value).collection("hi").doc(temp).set({
                 qs: child.childNodes[1].value,
                 op: l,
                 req: child.childNodes[9].childNodes[7].childNodes[3].checked,
                 type: mcqt
-              });
+              }));
               count++;
             }
 
             //upload file
             if (child.className == 'uploadType box') {
               var temp = count + "_U";            
-              db.collection('form').doc(title.value).collection("hi").doc(temp).set({
+              promises.push(db.collection('form').doc(title.value).collection("hi").doc(temp).set({
                 qs: child.childNodes[1].value,
                 req: child.childNodes[7].childNodes[5].childNodes[3].checked
-              });
+              }));
               count++;
             }
 
@@ -494,24 +493,28 @@ linearScale.addEventListener('click', () => {
               var child2 = child.childNodes[3].childNodes;
               console.log(child2);
       
-              db.collection('form').doc(title.value).collection("hi").doc(temp).set({
+              promises.push(db.collection('form').doc(title.value).collection("hi").doc(temp).set({
                 qs: child.childNodes[1].value,
                 min: child.childNodes[3].childNodes[1].value,
                 max: child.childNodes[3].childNodes[5].value,
                 lmin: child.childNodes[5].value,
                 lmax: child.childNodes[7].value,
                 req: child.childNodes[11].childNodes[5].childNodes[3].checked
-              });
+              }));
               count++;
             }
-
           }
-          document.write(` <div class="container">
-          <div class="box form_title" style="background-color: rgb(239, 241, 231); border: 2px solid green; padding-left: 10px;">
-          <h1>Great! Your form has successfully created.</h1>
-          <p>Go to "Your Forms" page to manage your form.</p>
-          </div>
-          </div>`);
+          Promise.all(promises)
+          .then((uploadedMediaList) => {
+             document.querySelector('.container').innerHTML = ` <div class="container">
+            <div class="box form_title onCreateMsg" style="background-color: rgb(239, 241, 231); border: 2px solid green; padding-left: 10px;">
+            <h1>Great! Your form has been successfully created.</h1>
+            <p>Go to <a href="/form">Your Forms</a> page to manage your form.</p>
+            </div>
+            </div>`;
+          })
+          .catch((err) => alert(err.code));
+         
         }
       }
       else{

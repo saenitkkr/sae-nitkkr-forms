@@ -4,7 +4,7 @@
 
         </div>
         {{!-- button to navigate from one response to other --}}
-        <div style="display: flex; justify-content: center; align-items: center; padding: 20px;">
+        <div style="display: flex; justify-content: center; align-items: center; height:50px;">
             <button class="toggle-response" type="submit" id="left" style="margin: 20px 20px;">
                 <i class="fa fa-arrow-left" aria-hidden="true"></i>
             </button>
@@ -94,8 +94,6 @@
                       </div>
 
                       <div class="seperator"></div>
-
-                      <div class="question-control"></div>
                        `;
 
                     additional.classList.add("box");
@@ -114,10 +112,7 @@
     
                     <p class="hi">Hi</p>
                       <a href=" " id="pdf" target="_blank" style="text-decoration: none">Click to open </a>
-
                     <div class="seperator"></div>
-
-                    <div class="question-control"></div>
                     `;
 
                     additional.classList.add("box");
@@ -140,9 +135,7 @@
                       <div class="indivisual">
                       </div>
                     </div>
-
-                    <div class="seperator"></div>
-                    <div class="question-control"></div>`;
+                    <div class="seperator"></div>`;
 
                     additional.classList.add("box");
                     mainContainer.appendChild(additional);
@@ -178,12 +171,7 @@
                           <span style="margin-right: 20px;">min</span>
                           <span style="margin-left: 20px;">max</span>
                         </div>
-
-           
-
                         <div class="seperator">
-                        </div>
-                        <div class="question-control">    
                         </div>
                         `;
 
@@ -199,20 +187,10 @@
                         var data = document.createElement('div');
                         data.className = "linearScale";
                         data.classList.add(doc.id);
-
-
-
-                        //var opt = document.createElement('input');
-                        //opt.type = "radio";
-                        //opt.name = "scale_opt";
-                        //opt.value = i;
-
-
                         var optname = document.createElement('p');
                         optname.innerHTML = i;
 
                         data.appendChild(optname);
-                        //data.appendChild(opt);
                         scale.insertBefore(data, scale.childNodes[3]);
                     }
                     count++;
@@ -223,7 +201,6 @@
         .catch((error) => {
             console.log("Error getting documents: ", error);
         });
-
     //end
 
 
@@ -328,17 +305,23 @@
     function uploadans(count_ans, count) {
 
         let num = count_ans + 1;
-        let storageRef = firebase.storage().ref(title.innerHTML + "/" + roll_arr[response] + "/" + num);
-        let this_ref = storageRef.child('ans');
-
-        var pdf = mainContainer.childNodes[count].childNodes[1].nextSibling.nextSibling;
-        this_ref.getDownloadURL()
-            .then((url) => {
-                pdf.setAttribute("href", url);
-                console.log(pdf);
-            }).catch(e => {
-                console.log('error uploading' + e);
+        db.collection('form').doc(title.innerHTML).collection("ans").doc(roll_arr[response]).collection("ans_1").get().then((docs)=>{
+            docs.forEach((doc)=>{
+                if(doc.id == (num+"_U")){
+                    var filename = doc.data().ans;
+                    let storageRef = firebase.storage().ref(title.innerHTML + "/" + roll_arr[response] + "/" + num);
+                    let this_ref = storageRef.child(filename)
+                    var pdf = mainContainer.childNodes[count].childNodes[1].nextSibling.nextSibling;
+                    this_ref.getDownloadURL()
+                        .then((url) => {
+                            pdf.setAttribute("href", url);
+                        }).catch(e => {
+                            console.log('error uploading' + e);
+                        })
+                }
             })
+        })
+        
     }
 
     function scaleans(count_ans, count) {
