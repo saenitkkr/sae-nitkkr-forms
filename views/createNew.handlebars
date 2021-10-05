@@ -15,7 +15,6 @@
       <i class="fa fa-list-ol ic" aria-hidden="true" id="multiple"></i>
       <i class="fa fa-paragraph ic" aria-hidden="true" id="paragraph"></i>
       <i class="fa fa-file ic" aria-hidden="true" id="fileUpload"></i>
-      <i class="fa fa-picture-o ic" aria-hidden="true" id="insertImage"></i>
     </div>
 
     <form id="main">
@@ -34,14 +33,17 @@
           <button class="down" onclick="niche(parentNode.parentNode)" type="button"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>
           <div class="required">
             <span>Required</span>
-            <input type="checkbox" id="switch" class="checkbox"  />
-            <label for="switch"  class="toggle" onclick="fn(this)" >
+            <input type="checkbox" id="switch" class="checkbox"/>
+            <label for="switch"  class="toggle" onclick="fn(this)">
             <label class="toggleHelper"></label>
           </label>
           </div>
           <div class="delete"><i class="fa fa-trash-o add" aria-hidden="true"></i></div>
           <div class="copy_question">
             <i class="fa fa-clone" aria-hidden="true"></i>
+          </div>
+          <div class="add_picture">
+            <i class="fa fa-picture-o" aria-hidden="true" ></i>
           </div>
         </div>
       </div> --}}
@@ -114,26 +116,30 @@
       n1 = 9
       n2 = 11
     }
+    if( type == 'image')
+      n1 = 9
     pr.childNodes[n1].childNodes[n2].addEventListener('click', (evt)=>{
       el = evt.currentTarget.parentNode.parentNode
       var tp=""
-      if(el.classList.contains('mcqType'))
+      var newel = el.cloneNode(true);
+        el.parentNode.insertBefore(newel, el.nextSibling)
+      if(el.classList.contains('imgType'))
+        tp = 'image'
+      if(el.classList.contains('mcqType')){
         tp = 'mcq'
-
-      newel = el.cloneNode(true);
-      el.parentNode.insertBefore(newel, el.nextSibling)
-      let options = document.getElementsByClassName('option');
-      options[options.length - 1].addEventListener('click', (e) => {
-        cheating = document.createElement("div");
-        cheating.classList.add('indivisual')
-        cheating.innerHTML = ` <input class="option-input nullCheck" placeholder = "Option"><button class="option_delete";>X</button>`;
-        e.target.parentElement.nextElementSibling.appendChild(cheating);
-        for (option_delete of byebye) {
-          option_delete.addEventListener('click', (e) => {
-            e.target.closest('div').remove();
-          })
-        }
-      })
+        let options = document.getElementsByClassName('option');
+        options[options.length - 1].addEventListener('click', (e) => {
+          cheating = document.createElement("div");
+          cheating.classList.add('indivisual')
+          cheating.innerHTML = ` <input class="option-input nullCheck" placeholder = "Option"><button class="option_delete";>X</button>`;
+          e.target.parentElement.nextElementSibling.appendChild(cheating);
+          for (option_delete of byebye) {
+            option_delete.addEventListener('click', (e) => {
+              e.target.closest('div').remove();
+            })
+          }
+        })
+      }
       setupCopyButtons(newel, tp)
       setupDeleteButtons();
       setupToggles();
@@ -171,6 +177,7 @@
     })
   }
 
+
   addParaQuestion.addEventListener('click', () => {
     additional = document.createElement("div");
     additional.className = 'textType';
@@ -199,6 +206,9 @@
         <div class="copy_question">
           <i class="fa fa-clone" aria-hidden="true"></i>
         </div>
+        <div class="add_picture">
+            <i class="fa fa-picture-o" aria-hidden="true" ></i>
+          </div>
       </div>
   `
     additional.classList.add("box");
@@ -276,6 +286,9 @@
         <div class="copy_question">
           <i class="fa fa-clone" aria-hidden="true"></i>
         </div>
+        <div class="add_picture">
+            <i class="fa fa-picture-o" aria-hidden="true" ></i>
+          </div>
       </div>`
     additional.classList.add("box");
     mainContainer.appendChild(additional);
