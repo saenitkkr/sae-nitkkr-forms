@@ -4,6 +4,7 @@
   
   body {
     font-family: Arial, helvetica, sans-serif;
+    width:100%;
   }
   
   .container{
@@ -350,7 +351,7 @@
   }
 
   .scale{
-    overflow-x: scroll;
+    overflow-x: auto;
     overflow-y: hidden;
   }
 
@@ -379,8 +380,8 @@
   @media screen and (max-width: 800px) {
   .container{
     padding-top: 50px;
-    width: 88%;
-    margin-left:10px;
+    width: 95%;
+    margin-left:auto;
     margin-right: auto;
   }
   .icon-bar{

@@ -15,8 +15,7 @@
       <i class="fa fa-list-ol ic" aria-hidden="true" id="multiple"></i>
       <i class="fa fa-paragraph ic" aria-hidden="true" id="paragraph"></i>
       <i class="fa fa-file ic" aria-hidden="true" id="fileUpload"></i>
-      <i class="fa fa-picture-o ic" aria-hidden="true" id="insertImage"></i>
-      <i class="fa fa-sort-numeric-desc" aria-hidden="true" id="linearscale"></i>
+      <i class="fa fa-sort-numeric-desc ic" aria-hidden="true" id="linearscale"></i>
     </div>
 
     <form id="main">
@@ -119,19 +118,17 @@
       n1 = 9
       n2 = 11
     }
-    if(type == 'scaleType'){
+    if(type == 'scale'){
       n1 = 11
       n2 = 9
     }
-    if( type == 'image')
-      n1 = 9
     pr.childNodes[n1].childNodes[n2].addEventListener('click', (evt)=>{
       el = evt.currentTarget.parentNode.parentNode
       var tp=""
       var newel = el.cloneNode(true);
         el.parentNode.insertBefore(newel, el.nextSibling)
-      if(el.classList.contains('imgType'))
-        tp = 'image'
+      if(el.classList.contains('scaleType'))
+        tp = 'scale'
       if(el.classList.contains('mcqType')){
         tp = 'mcq'
         let options = document.getElementsByClassName('option');
@@ -344,8 +341,8 @@ linearScale.addEventListener('click', () => {
         </select>
       </div>
 
-       <input type="text" id="minLable" placeholder="Lable(min value) optional"/>
-       <input type="text" id="maxLable" placeholder="Lable(max value) optional"/>
+       <input type="text" id="minLable" placeholder="Label(min value) optional"/>
+       <input type="text" id="maxLable" placeholder="Label(max value) optional"/>
 
       <div class="seperator">
 
@@ -371,7 +368,7 @@ linearScale.addEventListener('click', () => {
     mainContainer.appendChild(additional);
     setupDeleteButtons();
     setupToggles();
-    setupCopyButtons(additional,"scaleType");
+    setupCopyButtons(additional,"scale");
   });
   
 
