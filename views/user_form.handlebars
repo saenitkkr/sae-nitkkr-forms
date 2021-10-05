@@ -279,7 +279,6 @@
 
           //text type
           if (child.className == 'textType box') {
-            console.log(child.childNodes[3].value);
             db.collection('form').doc(title.innerHTML).collection("ans").doc(ID).collection("ans_1").doc(String(count1) + "_T").set({
               ans: child.childNodes[3].value,
             });
@@ -297,7 +296,6 @@
               ans: mcq_ans,
 
             });
-
             count1++;
           }
 
@@ -308,7 +306,6 @@
           if (child.className == 'uploadType box') {
 
             let file = child.childNodes[3].files[0];
-            console.log(file);
             let this_ref = storageRef.child('ans');
 
             this_ref.put(file).then(res => {
