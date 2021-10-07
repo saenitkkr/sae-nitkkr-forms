@@ -8,9 +8,10 @@
     <div class="box" id="show">
         <a class="a" href="/newForm"><i class="fa fa-plus-square-o" aria-hidden="true" style="font-size: 30px;"></i></a>
         <div class="hide">Create New form</div>
-        <h1><img src="https://img.icons8.com/ios-filled/50/000000/form.png"/><span style="margin-left: 20px;padding-top:5px;">Your Forms</span></h1>
+        <h1><img src="https://img.icons8.com/ios-filled/50/000000/form.png" /><span
+                style="margin-left: 20px;padding-top:5px;">Your Forms</span></h1>
         <div class="loader">
-           
+
         </div>
         <div class="no-responses">
 
@@ -26,7 +27,7 @@
 
     function renderdata(doc) {
         var date = doc.data().date;
-        doc_id = doc.id;
+        doc_id = doc.data().title;
         additional = document.createElement("div");
         additional.className = 'row';;
         additional.setAttribute("data-id", String(doc.id));
@@ -102,31 +103,35 @@
 
                 docRef.doc(id).collection("hi").get().then((querySnapshot) => {
                     querySnapshot.forEach((doc1) => {
-                       docRef.doc(id).collection("hi").doc(doc1.id).delete();
+                        docRef.doc(id).collection("hi").doc(doc1.id).delete();
                         // doc.data() is never undefined for query doc snapshots
                     });
                 });
                 docRef.doc(id).collection("ans").get().then((querySnapshot) => {
                     querySnapshot.forEach((doc1) => {
-                       docRef.doc(id).collection("ans").doc(doc1.id).delete();
+                        docRef.doc(id).collection("ans").doc(doc1.id).delete();
                         // doc.data() is never undefined for query doc snapshots
                     });
                 });
                 docRef.doc(id).delete();
-            }})  //add of event listener
+            }
+        })  //add of event listener
 
         copylink.addEventListener('click', (e) => {
             e.preventDefault();
-            var form_name = e.target.parentElement.parentElement.parentElement.getAttribute('data-id');
+            var form_timestamp = e.target.parentElement.parentElement.parentElement.getAttribute('data-id');
+            var form_title = e.target.parentElement.parentElement.parentElement.childNodes[1].innerHTML;
 
-            var encrypted = btoa(form_name);
+            var encrypted = btoa(form_timestamp);
             var decrypted = atob(encrypted);
-            var temp = "/userForm?form_title=" + encrypted;
+            var encrypted_title = btoa(form_title);
+            var decrypted_title = atob(encrypted_title);
+            var temp = "/userForm?form_timestamp=" + encrypted + "&form_title=" + encrypted_title;
             e.target.parentElement.href = temp;
             copyText = e.target.parentElement.href;
             navigator.clipboard.writeText(copyText);
             alert("Copied the text: " + copyText);
-        })  
+        })
     }  //end of render data function
 
     var dta = document.getElementById("show");
@@ -145,7 +150,7 @@
             }
             cnt++;
         })
-        if(cnt == 0){
+        if (cnt == 0) {
             document.querySelector('.no-responses').textContent = "There are no previous forms!";
             document.querySelector('.no-responses').style.fontSize = "18px";
             document.querySelector('.no-responses').style.textAlign = "center";
@@ -157,7 +162,12 @@
 
     function getresponse(title) {
         var form_title = title.innerHTML;
-        var clicked_title = "/response?form_title=" + form_title;
+        var form_timestamp = title.parentElement.getAttribute("data-id");
+        var encrypted = btoa(form_timestamp);
+        var decrypted = atob(encrypted);
+        var encrypted_title = btoa(form_title);
+        var decrypted_title = atob(encrypted_title);
+        var clicked_title = "/response?form_timestamp=" + encrypted + "&form_title=" + encrypted_title;
         title.href = clicked_title;
         console.log(clicked_title);
     }
@@ -166,8 +176,8 @@
     async function im_csv_fn(that) {
         roll_no = []
         // Await for the promise to resolve
-        console.log(that.parentNode.previousSibling.previousSibling.innerHTML)
-        let citiesRef = db.collection("form").doc(that.parentNode.previousSibling.previousSibling.innerHTML).collection("ans");
+        console.log(that.parentElement.parentElement.getAttribute('data-id'));
+        let citiesRef = db.collection("form").doc(that.parentElement.parentElement.getAttribute('data-id')).collection("ans");
         let allCities = await citiesRef.get();
         for (const doc of allCities.docs) {
             var p = doc.id;
@@ -175,13 +185,13 @@
         }
 
         for (var i = 0; i < roll_no.length; i++) {
-            let citiesRef = db.collection("form").doc(that.parentNode.previousSibling.previousSibling.innerHTML).collection("ans").doc(roll_no[i]).collection("ans_1");
+            let citiesRef = db.collection("form").doc(that.parentElement.parentElement.getAttribute('data-id')).collection("ans").doc(roll_no[i]).collection("ans_1");
             let allCities = await citiesRef.get();
             for (const doc of allCities.docs) {
                 var p = doc.data().ans;
                 var x = doc.id;
                 if (p == "pdf") {
-                    let storageRef = firebase.storage().ref(that.parentNode.previousSibling.previousSibling.innerHTML + "/" + roll_no[i] + "/" + x.slice(0, x.length - 2));
+                    let storageRef = firebase.storage().ref(that.parentElement.parentElement.getAttribute('data-id') + "/" + roll_no[i] + "/" + x.slice(0, x.length - 2));
                     let this_ref = storageRef.child('ans');
 
                     var limks = await this_ref.getDownloadURL();
@@ -220,7 +230,7 @@
 
     function download_csv_file(csvFileData) {
 
-        if(csvFileData.length == 0){
+        if (csvFileData.length == 0) {
             alert("There are no responses yet!");
             return;
         }

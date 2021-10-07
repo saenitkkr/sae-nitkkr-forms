@@ -23,27 +23,29 @@
         <div class="sample-text">
           Type your answer here
         </div>
-        
-        
+
+
         <div class="seperator">
 
         </div>
         <div class="question-control">
-          <button class="up" onclick="upar(parentNode.parentNode)" type="button"><i class="fa fa-arrow-up" aria-hidden="true"></i></button>
-          <button class="down" onclick="niche(parentNode.parentNode)" type="button"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>
+          <button class="up" onclick="upar(parentNode.parentNode)" type="button"><i class="fa fa-arrow-up"
+              aria-hidden="true"></i></button>
+          <button class="down" onclick="niche(parentNode.parentNode)" type="button"><i class="fa fa-arrow-down"
+              aria-hidden="true"></i></button>
           <div class="required">
             <span>Required</span>
-            <input type="checkbox" id="switch" class="checkbox"/>
-            <label for="switch"  class="toggle" onclick="fn(this)">
-            <label class="toggleHelper"></label>
-          </label>
+            <input type="checkbox" id="switch" class="checkbox" />
+            <label for="switch" class="toggle" onclick="fn(this)">
+              <label class="toggleHelper"></label>
+            </label>
           </div>
           <div class="delete"><i class="fa fa-trash-o add" aria-hidden="true"></i></div>
           <div class="copy_question">
             <i class="fa fa-clone" aria-hidden="true"></i>
           </div>
           <div class="add_picture">
-            <i class="fa fa-picture-o" aria-hidden="true" ></i>
+            <i class="fa fa-picture-o" aria-hidden="true"></i>
           </div>
         </div>
       </div> --}}
@@ -111,30 +113,30 @@
     }
   }
 
-  function setupCopyButtons(pr, type=""){
+  function setupCopyButtons(pr, type = "") {
     var n1 = 7, n2 = 9
-    if(type == 'mcq'){
+    if (type == 'mcq') {
       n1 = 9
       n2 = 11
     }
-    if(type == 'scale'){
+    if (type == 'scale') {
       n1 = 11
       n2 = 9
     }
-    pr.childNodes[n1].childNodes[n2].addEventListener('click', (evt)=>{
+    pr.childNodes[n1].childNodes[n2].addEventListener('click', (evt) => {
       el = evt.currentTarget.parentNode.parentNode
-      var tp=""
+      var tp = ""
       var newel = el.cloneNode(true);
-        el.parentNode.insertBefore(newel, el.nextSibling)
-      if(el.classList.contains('scaleType'))
+      el.parentNode.insertBefore(newel, el.nextSibling)
+      if (el.classList.contains('scaleType'))
         tp = 'scale'
-      if(el.classList.contains('mcqType')){
+      if (el.classList.contains('mcqType')) {
         tp = 'mcq'
         let options = document.getElementsByClassName('option');
         options[options.length - 1].addEventListener('click', (e) => {
           cheating = document.createElement("div");
           cheating.classList.add('indivisual')
-          cheating.innerHTML = ` <input class="option-input nullCheck" placeholder = "Option"><button class="option_delete";>X</button>`;
+          cheating.innerHTML = ` <input class="option-input nullCheck" placeholder = "Option"><button class="option_delete" type="button">X</button>`;
           e.target.parentElement.nextElementSibling.appendChild(cheating);
           for (option_delete of byebye) {
             option_delete.addEventListener('click', (e) => {
@@ -316,7 +318,7 @@
     setupCopyButtons(additional, "mcq");
   })
 
-linearScale.addEventListener('click', () => {
+  linearScale.addEventListener('click', () => {
     additional = document.createElement("div");
     additional.className = 'scaleType';
     additional.innerHTML = `
@@ -367,9 +369,9 @@ linearScale.addEventListener('click', () => {
     mainContainer.appendChild(additional);
     setupDeleteButtons();
     setupToggles();
-    setupCopyButtons(additional,"scale");
+    setupCopyButtons(additional, "scale");
   });
-  
+
 
   let possible = document.getElementById('possible');
   let options = document.getElementsByClassName('option');
@@ -426,13 +428,16 @@ linearScale.addEventListener('click', () => {
   var yyyy = today.getFullYear();
 
   today = mm + '/' + dd + '/' + yyyy;
-  
+
   button.addEventListener('click',
     (e) => {
-      if(document.querySelectorAll('div.box').length > 1){
+      if (document.querySelectorAll('div.box').length > 1) {
         var ch = null_check();
         if (ch && previous_roll_check()) {
-          db.collection('form').doc(title.value).set({
+          var timestamp = String(new Date().getTime());
+          console.log(timestamp);
+          db.collection('form').doc(timestamp).set({
+            title: title.value,
             desc: desc.value,
             date: today,
 
@@ -443,8 +448,8 @@ linearScale.addEventListener('click', () => {
             //text type
             if (child.className == 'textType box') {
               var temp = count + "_T";
-      
-              promises.push(db.collection('form').doc(title.value).collection("hi").doc(temp).set({
+
+              promises.push(db.collection('form').doc(timestamp).collection("hi").doc(temp).set({
                 qs: child.childNodes[1].value,
                 req: child.childNodes[7].childNodes[5].childNodes[3].checked
 
@@ -466,9 +471,9 @@ linearScale.addEventListener('click', () => {
                 if (num == 1)
                   num += 1;
               }
-            
-              var mcqt = (child.childNodes[9].childNodes[1].childNodes[3].checked)?'single':'multiple'
-              promises.push(db.collection('form').doc(title.value).collection("hi").doc(temp).set({
+
+              var mcqt = (child.childNodes[9].childNodes[1].childNodes[3].checked) ? 'single' : 'multiple'
+              promises.push(db.collection('form').doc(timestamp).collection("hi").doc(temp).set({
                 qs: child.childNodes[1].value,
                 op: l,
                 req: child.childNodes[9].childNodes[7].childNodes[3].checked,
@@ -479,8 +484,8 @@ linearScale.addEventListener('click', () => {
 
             //upload file
             if (child.className == 'uploadType box') {
-              var temp = count + "_U";            
-              promises.push(db.collection('form').doc(title.value).collection("hi").doc(temp).set({
+              var temp = count + "_U";
+              promises.push(db.collection('form').doc(timestamp).collection("hi").doc(temp).set({
                 qs: child.childNodes[1].value,
                 req: child.childNodes[7].childNodes[5].childNodes[3].checked
               }));
@@ -491,9 +496,9 @@ linearScale.addEventListener('click', () => {
             if (child.className == 'scaleType box') {
               var temp = count + "_S";
               var child2 = child.childNodes[3].childNodes;
-              console.log(child2);
-      
-              promises.push(db.collection('form').doc(title.value).collection("hi").doc(temp).set({
+
+
+              promises.push(db.collection('form').doc(timestamp).collection("hi").doc(temp).set({
                 qs: child.childNodes[1].value,
                 min: child.childNodes[3].childNodes[1].value,
                 max: child.childNodes[3].childNodes[5].value,
@@ -505,20 +510,20 @@ linearScale.addEventListener('click', () => {
             }
           }
           Promise.all(promises)
-          .then((uploadedMediaList) => {
-             document.querySelector('.container').innerHTML = ` <div class="container">
+            .then((uploadedMediaList) => {
+              document.querySelector('.container').innerHTML = ` <div class="container">
             <div class="box form_title onCreateMsg" style="background-color: rgb(239, 241, 231); border: 2px solid green; padding-left: 10px;">
             <h1>Great! Your form has been successfully created.</h1>
             <p>Go to <a href="/form">Your Forms</a> page to manage your form.</p>
             </div>
             </div>`;
-          })
-          .catch((err) => alert(err.code));
-         
+            })
+            .catch((err) => alert(err.code));
+
         }
       }
-      else{
-          alert("There should be atleast one question in a form!")
+      else {
+        alert("There should be atleast one question in a form!")
       }
     }
   );

@@ -26,15 +26,18 @@
 
 <script>
   const params = (new URL(document.location)).searchParams;
-  var decrypted = params.get('form_title');
-  var form_title = decrypted;
+  var decrypted = atob(params.get('form_timestamp'));
+  var form_timestamp = decrypted;
+  var decrypted_title = atob(params.get('form_title'));
+  var form_title = decrypted_title;
 
   let mainContainer = document.getElementById("main");
   const title = document.querySelector('#title');
   const desc = document.querySelector('#desc');
   title.innerHTML = form_title;
+  // console.log(form_title,form_timestamp)
 
- //to check required field
+  //to check required field
   function fn(bool, e) {
     if (bool) {
       additional.childNodes[1].innerHTML += `<span class='star'>*</span>`;
@@ -43,9 +46,9 @@
       }
     }
   }//end
-  
 
-  var docRef = db.collection('form').doc(title.innerHTML);
+
+  var docRef = db.collection('form').doc(form_timestamp);
   docRef.get().then((doc) => {
     desc.innerHTML = doc.data().desc;
 
@@ -127,7 +130,7 @@
                  `
           additional.classList.add("box");
           mainContainer.appendChild(additional);
-          if(doc.data().type == 'single')
+          if (doc.data().type == 'single')
             qs += " <span style='color:rgb(84,79,79); font-size:14px'>(single correct type)</span>"
           else qs += " <span style='color:rgb(84,79,79); font-size:14px'>(multiple correct type)</span>"
           mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
@@ -158,7 +161,7 @@
           additional.innerHTML += `
     
             <p class="hi">Hi </p>
-            <div class="scale" style="display:flex; align-items:center; justify-content:left;"> 
+            <div class="scale" style="display:flex; align-items:center; justify-content:left;" data-id="que-id"> 
               <span style="margin-right: 20px;">min</span>
               <span style="margin-left: 20px;">max</span>
             </div>
@@ -174,18 +177,21 @@
           mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
           fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
 
-          var scale = document.querySelector(".scale");
+
+
+          var scale = mainContainer.childNodes[count].childNodes[3];
+          //scale.setAttribute("data-id", count);
+
           scale.childNodes[1].innerHTML = lmin;
           scale.childNodes[3].innerHTML = lmax;
-          for(var i = max; i>=min; i--)
-          {
+          for (var i = max; i >= min; i--) {
             var data = document.createElement('div');
             data.className = "linearScale";
             data.classList.add(doc.id);
             var opt = document.createElement('input');
             opt.type = "radio";
             opt.name = "scale_opt";
-            opt.value= i;
+            opt.value = i;
             var optname = document.createElement('p');
             optname.innerHTML = i;
 
@@ -195,7 +201,7 @@
           }
           count++;
         }
-        
+
       });
       document.querySelector('.loader').style.display = "none";
     })
@@ -203,7 +209,7 @@
       console.log("Error getting documents: ", error);
     });
 
-//end
+  //end
 
 
   //extract total number of responses
@@ -221,7 +227,7 @@
       alert("There are no responses for this form!")
     }
     else {
-      window.location.href = "/view_response?form_title=" + form_title;
+      window.location.href = "/view_response?form_timestamp=" + form_timestamp + "&form_title=" + form_title;
     }
   }
 

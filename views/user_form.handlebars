@@ -8,9 +8,9 @@
     <form id="main">
       <input type="number" min="1" class="ID" id="op" data-id="ok" placeholder="Roll Number" required>
     </form>
-     <div class="loader">
-           
-        </div>
+    <div class="loader">
+
+    </div>
     <div class="result">
       <div class="create-button" id="submit_form" type="submit">Submit</div>
     </div>
@@ -20,41 +20,43 @@
 
   const batch = db.batch()
   const params = (new URL(document.location)).searchParams;
-  var decrypted = atob(params.get('form_title'));
-  var form_title = decrypted;
+  var decrypted = atob(params.get('form_timestamp'));
+  var form_timestamp = decrypted;
+  var decrypted_title = atob(params.get('form_title'));
+  var form_title = decrypted_title;
   let mainContainer = document.getElementById("main");
   const title = document.querySelector('#title');
   const desc = document.querySelector('#desc');
   title.innerHTML = form_title;
- 
- let getAllOpts = function (e) {
-    let siblings = []; 
+
+  let getAllOpts = function (e) {
+    let siblings = [];
 
     // if no parent, return no sibling
-    if(!e.parentNode) {
-        return siblings;
+    if (!e.parentNode) {
+      return siblings;
     }
     // first child of the parent node
-    let sibling  = e.parentNode.parentNode.firstChild;
-    
+    let sibling = e.parentNode.parentNode.firstChild;
+
     // collecting siblings
     while (sibling) {
-        if (sibling.nodeType === 1 && sibling !== e) {
-            siblings.push(sibling.firstChild);
-        }
-        sibling = sibling.nextSibling;
+      if (sibling.nodeType === 1 && sibling !== e) {
+        siblings.push(sibling.firstChild);
+      }
+      sibling = sibling.nextSibling;
     }
     return siblings;
-};
+  };
 
   function textAreaAdjust(element) {
     element.style.height = "1px";
-    element.style.height = (element.scrollHeight-17)+"px";
+    element.style.height = (element.scrollHeight - 17) + "px";
   }
-  function fn(bool, e) { 
+  function fn(bool, e) {
     if (bool) {
       additional.childNodes[1].innerHTML += `<span class='star'>*</span>`;
-      
+
       if (additional.className != "mcqType box") {
         additional.childNodes[3].setAttribute("data-id", "ok");
       }
@@ -67,7 +69,7 @@
     for (var i = 0; i < li.length; i++) {
 
       if (li[i].type == "number") {
-        if (li[i].value == 0) { 
+        if (li[i].value == 0) {
           li[i].scrollIntoView({ behavior: 'smooth', block: 'end' });
           alert("fill up required feilds");
           return false;
@@ -83,7 +85,7 @@
       }
 
 
-      if (li[i].type == "file") { 
+      if (li[i].type == "file") {
         if (li[i].files.length == 0) {
           li[i].scrollIntoView({ behavior: 'smooth', block: 'end' });
           alert("fill up required feilds");
@@ -94,8 +96,8 @@
     return true;
   }
 
-
-  var docRef = db.collection('form').doc(title.innerHTML);
+  console.log(form_timestamp);
+  var docRef = db.collection('form').doc(form_timestamp);
   var previous_roll_no = [];
   var count = 3;
 
@@ -104,7 +106,7 @@
   }).catch((error) => {
     console.log("Error getting document:", error);
   });
-  
+
 
   docRef.collection("ans").get().then((querySnapshot) => {
     querySnapshot.forEach((doc) => {
@@ -169,7 +171,7 @@
 
         if (curr[len - 1] == 'O') {
           var qs = doc.data().qs;
-          
+
           additional = document.createElement("div");
           additional.className = "mcqType";
           additional.innerHTML = `
@@ -204,8 +206,8 @@
             oplist.push(p2)
             mainContainer.childNodes[count].childNodes[3].childNodes[1].appendChild(data);
           }
-          oplist.forEach((ol)=>{
-            if(doc.data().type == 'single'){
+          oplist.forEach((ol) => {
+            if (doc.data().type == 'single') {
               ol.addEventListener('click', checkSelections)
             }
           })
@@ -237,18 +239,17 @@
           mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
           fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
 
-          var scale = document.querySelector(".scale");
+          var scale = mainContainer.childNodes[count].childNodes[3];
           scale.childNodes[1].innerHTML = lmin;
           scale.childNodes[3].innerHTML = lmax;
-          for(var i = max; i>=min; i--)
-          {
+          for (var i = max; i >= min; i--) {
             var data = document.createElement('div');
             data.className = "linearScale";
             data.classList.add(doc.id);
             var opt = document.createElement('input');
             opt.type = "radio";
-            opt.name = "scale_opt";
-            opt.value= i;
+            opt.name = "scale_" + count;
+            opt.value = i;
             var optname = document.createElement('p');
             optname.innerHTML = i;
 
@@ -260,20 +261,20 @@
         }
 
       });
-      document.querySelector('.loader').style.display="none";
+      document.querySelector('.loader').style.display = "none";
     })
     .catch((error) => {
       console.log("Error getting documents: ", error);
     });
 
-    //check for selection for single correct mcq type
-    function checkSelections(evt){
-      var ol = evt.currentTarget
-      var sibs = getAllOpts(ol);
-      sibs.forEach((item) => {
-          if (item !== ol) item.checked = false
-      })
-    }
+  //check for selection for single correct mcq type
+  function checkSelections(evt) {
+    var ol = evt.currentTarget
+    var sibs = getAllOpts(ol);
+    sibs.forEach((item) => {
+      if (item !== ol) item.checked = false
+    })
+  }
 
   var roll_number = document.getElementById("op");
 
@@ -294,13 +295,13 @@
 
   var count1 = 1
   var uploadCnt = 0
-  function checkFile(e){
-    var file = (e.files)[0]; 
-    var filesize = ((file.size/1024)/1024).toFixed(4);
-    if(filesize > 10){
+  function checkFile(e) {
+    var file = (e.files)[0];
+    var filesize = ((file.size / 1024) / 1024).toFixed(4);
+    if (filesize > 10) {
       alert("filesize should be less than 10Mb")
       e.value = ""
-      }
+    }
   }
 
   button.addEventListener('click',
@@ -313,7 +314,7 @@
         for (var child = form.firstChild; child !== null; child = child.nextSibling) {
           if (child.className == 'ID') {
             ID = child.value;
-            db.collection("form").doc(title.innerHTML).collection("ans").doc(ID).set({
+            db.collection("form").doc(form_timestamp).collection("ans").doc(ID).set({
               roll: ID,
             });
           }
@@ -321,7 +322,7 @@
 
           //text type
           if (child.className == 'textType box') {
-            db.collection('form').doc(title.innerHTML).collection("ans").doc(ID).collection("ans_1").doc(String(count1) + "_T").set({
+            db.collection('form').doc(form_timestamp).collection("ans").doc(ID).collection("ans_1").doc(String(count1) + "_T").set({
               ans: child.childNodes[3].value,
             });
             count1++;
@@ -334,7 +335,7 @@
               mcq_ans[i - 1] = child.childNodes[3].childNodes[1].childNodes[i].childNodes[0].checked;
 
             }
-            db.collection('form').doc(title.innerHTML).collection("ans").doc(ID).collection("ans_1").doc(String(count1) + "_O").set({
+            db.collection('form').doc(form_timestamp).collection("ans").doc(ID).collection("ans_1").doc(String(count1) + "_O").set({
               ans: mcq_ans,
             });
             count1++;
@@ -342,14 +343,14 @@
 
 
           //upload file
-          let storageRef = firebase.storage().ref(title.innerHTML + "/" + ID + "/" + count1);
+          let storageRef = firebase.storage().ref(form_timestamp + "/" + ID + "/" + count1);
 
           if (child.className == 'uploadType box') {
             uploadCnt++
 
             let file = child.childNodes[3].files[0];
             const filename = file.name;
-  
+
             let this_ref = storageRef.child(filename);
 
             promises.push(this_ref.put(file).then(res => {
@@ -357,7 +358,7 @@
               console.log('error uploading' + e);
             }))
 
-            db.collection('form').doc(title.innerHTML).collection("ans").doc(ID).collection("ans_1").doc(String(count1) + "_U").set({
+            db.collection('form').doc(form_timestamp).collection("ans").doc(ID).collection("ans_1").doc(String(count1) + "_U").set({
               ans: filename,
 
             });
@@ -367,16 +368,14 @@
 
           //linear scale
           if (child.className == 'scaleType box') {
-            for(var i=3; child.childNodes[3].childNodes[i].childNodes[1]!=null; i++)
-            {
-              
-              if(child.childNodes[3].childNodes[i].childNodes[1].checked == true)
-              {
+            for (var i = 3; child.childNodes[3].childNodes[i].childNodes[1] != null; i++) {
+
+              if (child.childNodes[3].childNodes[i].childNodes[1].checked == true) {
                 console.log(child.childNodes[3].childNodes[i].childNodes[1].value)
                 var lans = child.childNodes[3].childNodes[i].childNodes[1].value;
               }
             }
-            db.collection('form').doc(title.innerHTML).collection("ans").doc(ID).collection("ans_1").doc(String(count1) + "_S").set({
+            db.collection('form').doc(form_timestamp).collection("ans").doc(ID).collection("ans_1").doc(String(count1) + "_S").set({
               ans: lans,
 
             });
@@ -385,17 +384,17 @@
 
         }
         Promise.all(promises)
-        .then((uploadedMediaList) => {
-           document.querySelector('.container').innerHTML =  `<div class="container">
+          .then((uploadedMediaList) => {
+            document.querySelector('.container').innerHTML = `<div class="container">
           <div class="box form_title onCreateMsg" style="background-color: rgb(239, 241, 231); border: 2px solid green; padding-left: 10px;">
           <h1>Your response has been recorded</h1>
           <p>Thank you for submitting your response.</p>
           </div>
           </div>`;
-          document.querySelector('.result').innerHTML =  `<div class="create-button" id="submit_form" type="submit">Submit</div>`;
-        })
-        .catch((err)=>{});
-       
+            document.querySelector('.result').innerHTML = `<div class="create-button" id="submit_form" type="submit">Submit</div>`;
+          })
+          .catch((err) => { });
+
       }
 
     })

@@ -30,8 +30,11 @@
 
 <script>
     const params = (new URL(document.location)).searchParams;
-    var decrypted = params.get('form_title');
-    var form_title = decrypted;
+    var decrypted = params.get('form_timestamp');
+    var form_timestamp = decrypted;
+    var decrypted_title = params.get('form_title');
+    var form_title = decrypted_title;
+    //console.log(form_title,form_timestamp)
 
     let mainContainer = document.getElementById("main");
     const title = document.querySelector('#title');
@@ -48,7 +51,7 @@
         }
     }//end
 
-    var docRef = db.collection('form').doc(title.innerHTML);
+    var docRef = db.collection('form').doc(form_timestamp);
     docRef.get().then((doc) => {
         desc.innerHTML = doc.data().desc;
 
@@ -180,7 +183,7 @@
                     mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
                     fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
 
-                    var scale = document.querySelector(".scale");
+                    var scale = mainContainer.childNodes[count].childNodes[3];
                     scale.childNodes[1].innerHTML = lmin;
                     scale.childNodes[3].innerHTML = lmax;
                     for (var i = max; i >= min; i--) {
@@ -246,7 +249,7 @@
                 res_no.innerHTML = response + 1;
                 count++;
 
-                db.collection("form").doc(title.innerHTML).collection("ans").doc(roll_arr[response]).collection("ans_1").get()
+                db.collection("form").doc(form_timestamp).collection("ans").doc(roll_arr[response]).collection("ans_1").get()
                     .then((querySnapshot) => {
                         querySnapshot.forEach((doc) => {
                             ansid[j] = doc.id;
@@ -294,9 +297,11 @@
         for (var k = 0; k < op_ans.length; k++) {
             if (op_ans[k] == true) {
                 indi.childNodes[k + 1].childNodes[0].style.color = "blue";
+                indi.childNodes[k + 1].childNodes[0].style.fontSize = "17px";
             }
             if (op_ans[k] == false) {
                 indi.childNodes[k + 1].childNodes[0].style.color = "black";
+                indi.childNodes[k + 1].childNodes[0].style.fontSize = "15px";
             }
         }
     }
@@ -305,11 +310,11 @@
     function uploadans(count_ans, count) {
 
         let num = count_ans + 1;
-        db.collection('form').doc(title.innerHTML).collection("ans").doc(roll_arr[response]).collection("ans_1").get().then((docs)=>{
-            docs.forEach((doc)=>{
-                if(doc.id == (num+"_U")){
+        db.collection('form').doc(form_timestamp).collection("ans").doc(roll_arr[response]).collection("ans_1").get().then((docs) => {
+            docs.forEach((doc) => {
+                if (doc.id == (num + "_U")) {
                     var filename = doc.data().ans;
-                    let storageRef = firebase.storage().ref(title.innerHTML + "/" + roll_arr[response] + "/" + num);
+                    let storageRef = firebase.storage().ref(form_timestamp + "/" + roll_arr[response] + "/" + num);
                     let this_ref = storageRef.child(filename)
                     var pdf = mainContainer.childNodes[count].childNodes[1].nextSibling.nextSibling;
                     this_ref.getDownloadURL()
@@ -321,22 +326,20 @@
                 }
             })
         })
-        
+
     }
 
     function scaleans(count_ans, count) {
         var data = mainContainer.childNodes[count].childNodes[3];
         for (var i = 3; data.childNodes[i].childNodes[0].childNodes[0] != null; i++) {
-            if (data.childNodes[i].childNodes[0].innerHTML == ans[count_ans]) 
-            {  
+            if (data.childNodes[i].childNodes[0].innerHTML == ans[count_ans]) {
                 data.childNodes[i].childNodes[0].style.color = "blue";
                 data.childNodes[i].childNodes[0].style.fontSize = "25px";
             }
-            else
-            {  
-                data.childNodes[i].childNodes[0].style.color = "black";  
-                data.childNodes[i].childNodes[0].style.fontSize = "18px";  
-            }   
+            else {
+                data.childNodes[i].childNodes[0].style.color = "black";
+                data.childNodes[i].childNodes[0].style.fontSize = "18px";
+            }
         }
     }
 
