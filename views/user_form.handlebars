@@ -368,18 +368,21 @@
 
           //linear scale
           if (child.className == 'scaleType box') {
+            
             for (var i = 3; child.childNodes[3].childNodes[i].childNodes[1] != null; i++) {
+                console.log(child.childNodes[3].childNodes[i].childNodes[1]);
 
               if (child.childNodes[3].childNodes[i].childNodes[1].checked == true) {
-                console.log(child.childNodes[3].childNodes[i].childNodes[1].value)
-                var lans = child.childNodes[3].childNodes[i].childNodes[1].value;
+                var lans = child.childNodes[3].childNodes[i].childNodes[1].value; 
               }
+              //child.childNodes[3].childNodes[i].childNodes[1].checked = false;
+
             }
             db.collection('form').doc(form_timestamp).collection("ans").doc(ID).collection("ans_1").doc(String(count1) + "_S").set({
               ans: lans,
 
             });
-            count1++;
+            count1++;  
           }
 
         }

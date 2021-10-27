@@ -1,0 +1,353 @@
+<div onload="doSetup()">
+    <div class="container">
+        <div class="box form_title">
+            <div id="title"></div>
+            <div id="desc"></div>
+        </div>
+
+        <form id="main">
+
+        </form>
+    </div>
+</div>
+
+<script>
+    const params = (new URL(document.location)).searchParams;
+    var decrypted = params.get('form_timestamp');
+    var form_timestamp = decrypted;
+    var decrypted_title = params.get('form_title');
+    var form_title = decrypted_title;
+    var decrypted_queId = params.get('que_Id');
+    var queId = decrypted_queId;
+
+    //to check required field
+    function fn(bool, e) {
+        if (bool) {
+            additional.childNodes[1].innerHTML += `<span class='star'>*</span>`;
+
+        }
+    }//end
+
+    //to append two array for google chart
+    function appendArrays() {
+        var temp = []
+        for (var i = 0; i < arguments.length; i++) {
+            temp.push(arguments[i]);
+        }
+        return temp;
+    }
+
+    let mainContainer = document.getElementById("main");
+    const title = document.querySelector('#title');
+    const desc = document.querySelector('#desc');
+    title.innerHTML = form_title;
+
+    var docRef = db.collection('form').doc(form_timestamp);
+    docRef.get().then((doc) => {
+        desc.innerHTML = doc.data().desc;
+
+    }).catch((error) => {
+        console.log("Error getting document:", error);
+    });
+
+    var roll_arr = [], r = 0, count = 3, k = 0;
+    docRef.collection('ans').get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                roll_arr[r] = doc.id;
+                r++;
+            }); //extract roll no
+
+
+            var len = queId.length;
+
+            //text type question
+            if (queId[len - 1] == 'T') {
+                docRef.collection("hi").doc(queId).get().then((doc) => {
+                    var qs = doc.data().qs;
+
+                    additional = document.createElement("div");
+                    additional.className = 'textType';
+                    additional.innerHTML += `
+                      <p class="hi">  </p>
+                       `;
+
+                    additional.classList.add("box");
+                    mainContainer.appendChild(additional);
+
+                    mainContainer.childNodes[1].childNodes[1].innerHTML = qs;
+                    fn(doc.data().req, mainContainer.childNodes[1].childNodes[1]);
+                });
+
+
+                for (var i = 0; i < roll_arr.length; i++) {
+
+                    docRef.collection("ans").doc(roll_arr[i]).collection("ans_1").doc(queId).get().then((doc) => {
+                        var ans = doc.data().ans;
+
+                        additional.innerHTML += `
+                                <div class="sample-text">
+                                    answer here
+                                </div>  
+                            `;
+
+                        mainContainer.childNodes[1].childNodes[count].innerHTML = roll_arr[k++] + ") " + ans;
+                        count += 2;
+                    });
+                }
+            }//end
+
+            //linear scale question
+            if (queId[len - 1] == 'S') {
+                var min, max;
+                docRef.collection("hi").doc(queId).get().then((doc) => {
+                    var qs = doc.data().qs;
+                    min = doc.data().min;
+                    max = doc.data().max;
+
+                    additional = document.createElement("div");
+                    additional.className = 'scaleType';
+                    additional.innerHTML += `
+                      <p class="hi">  </p>
+                       `;
+
+                    additional.classList.add("box");
+                    mainContainer.appendChild(additional);
+
+                    mainContainer.childNodes[1].childNodes[1].innerHTML = qs;
+                    fn(doc.data().req, mainContainer.childNodes[1].childNodes[1]);
+                });
+
+                var ans, ans_count = [], obj = [], a = 0;
+                ans_count[0] = "no of students";
+                obj[0] = "options";
+
+                for (var i = 0; i < roll_arr.length; i++) {
+
+                    docRef.collection("ans").doc(roll_arr[i]).collection("ans_1").doc(queId).get().then((doc) => {
+                        ans = doc.data().ans;
+
+                        additional.innerHTML += `
+                                <div class="sample-text">
+                                    answer here
+                                </div>  
+                            `;
+
+                        mainContainer.childNodes[1].childNodes[count].innerHTML = roll_arr[a++] + ") " + ans;
+                        count += 2;
+
+                        for (var k = min; k <= max; k++) {
+
+                            if (k == ans) {
+                                if (min == 0) {
+                                    ++k;
+                                    ans_count[k] = ans_count[k] || 0;
+                                    ans_count[k]++;
+                                    k--;
+                                }
+                                if (min == 1) {
+                                    ans_count[k] = ans_count[k] || 0;
+                                    ans_count[k]++;
+                                }
+                            }
+                        }
+                    });
+                }
+
+                setTimeout(function () {
+                    mychart = document.createElement("div");
+                    mychart.setAttribute('id', 'piechart')
+                    mainContainer.appendChild(mychart);
+
+                    for (var i = min; i <= max; i++) {
+                        if (min == 0) {
+                            var temp = String(i);
+                            obj[++i] = temp;
+                            i--;
+                        }
+                        if (min == 1)
+                            obj[i] = String(i)
+                    }
+
+                    var merged = []
+                    for (a = 0; a < obj.length; a++) {
+                        merged.push(appendArrays(obj[a], ans_count[a]));
+                    }
+                    console.log(merged);
+
+                    // Load google charts
+                    google.charts.load('current', { 'packages': ['corechart'] });
+                    google.charts.setOnLoadCallback(drawChart);
+
+                    // Draw the chart and set the chart values
+                    function drawChart() {
+                        var data = google.visualization.arrayToDataTable(
+                            merged
+                        );
+
+                        var options = {
+                            'title': 'Graphical Visualization',
+                            'width': 900,
+                            'height': 600
+                        };
+                        // Display the chart inside the <div> element with id="piechart"
+                        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+                        chart.draw(data, options);
+                    }
+
+                }, 2000);
+            }//end
+
+            //Upload type question
+            if (queId[len - 1] == 'U') {
+                k = 0;
+                docRef.collection("hi").doc(queId).get().then((doc) => {
+                    var qs = doc.data().qs;
+
+                    additional = document.createElement("div");
+                    additional.className = 'uploadType';
+                    additional.innerHTML += `
+                      <p class="hi">  </p>
+                       `;
+
+                    additional.classList.add("box");
+                    mainContainer.appendChild(additional);
+
+                    mainContainer.childNodes[1].childNodes[1].innerHTML = qs;
+                    fn(doc.data().req, mainContainer.childNodes[1].childNodes[1]);
+                });
+
+                var j = 0;
+
+                docRef.collection("ans").get()
+                    .then((querySnapshot) => {
+                        querySnapshot.forEach((doc) => {
+                            var temp = doc.id;
+
+                            docRef.collection("ans").doc(temp).collection("ans_1").doc(queId).get().then((doc1) => {
+                                var ans = doc1.data().ans;
+                                // file_name[j]=ans;
+
+                                let storageRef = firebase.storage().ref(form_timestamp + "/" + roll_arr[j++] + "/" + queId[len - 3]);
+                                var this_ref = storageRef.child(ans)
+
+                                this_ref.getDownloadURL()
+                                    .then((url) => {
+
+                                        additional.innerHTML += `
+                                            <a href="" id="pdf" target="_blank" style="text-decoration: none">Click to open </a>
+                                            <br><br>
+                                            `;
+
+                                        mainContainer.childNodes[1].childNodes[count].setAttribute("href", url);
+                                        mainContainer.childNodes[1].childNodes[count].innerHTML = temp + ") " + ans;
+                                        count += 5;
+
+                                    }).catch(e => {
+                                        console.log('error uploading' + e);
+                                    });
+
+                            });
+                        });
+                    });
+
+
+
+            }//end
+
+            //option type question
+            if (queId[len - 1] == 'O') {
+                var opt, option = [], q = 0;
+                docRef.collection("hi").doc(queId).get().then((doc) => {
+                    var qs = doc.data().qs;
+                    opt = doc.data().op;
+
+
+                    additional = document.createElement("div");
+                    additional.className = 'mcqType';
+                    additional.innerHTML += `
+                      <p class="hi">  </p>
+                       `;
+
+                    additional.classList.add("box");
+                    mainContainer.appendChild(additional);
+
+                    mainContainer.childNodes[1].childNodes[1].innerHTML = qs;
+                    fn(doc.data().req, mainContainer.childNodes[1].childNodes[1]);
+                });
+
+                var ans, ans_count = [], obj = [], a = 0;
+                ans_count[0] = "no of students";
+                obj[0] = "options";
+
+                for (var i = 0; i < roll_arr.length; i++) {
+
+                    docRef.collection("ans").doc(roll_arr[i]).collection("ans_1").doc(queId).get().then((doc) => {
+                        ans = doc.data().ans;
+
+                        additional.innerHTML += `
+                                <div class="sample-text">
+                                    answer here
+                                </div>  
+                            `;
+
+                        for (var k = 0; k < ans.length; k++) {
+                            ans_count[k + 1] = ans_count[k + 1] || 0;
+                            if (ans[k] == true) {
+                                option[q++] = opt[k];
+                                ans_count[k + 1]++;
+                            }
+                        }
+
+                        mainContainer.childNodes[1].childNodes[count].innerHTML = roll_arr[a++] + ") " + option;
+                        count += 2;
+                        option = [], q = 0;
+
+                    });
+                }
+
+                setTimeout(function () {
+
+                    mychart = document.createElement("div");
+                    mychart.setAttribute('id', 'piechart')
+                    mainContainer.appendChild(mychart);
+
+                    docRef.collection("hi").doc(queId).get().then((doc) => {
+                        var op = doc.data().op;
+
+                        for (var i = 0; i < op.length; i++) {
+                            obj[i + 1] = op[i];
+                        }
+
+
+                        var merged = []
+                        for (i = 0; i < obj.length; i++) {
+                            merged.push(appendArrays(obj[i], ans_count[i]));
+                        }
+
+                        // Load google charts
+                        google.charts.load('current', { 'packages': ['corechart'] });
+                        google.charts.setOnLoadCallback(drawChart);
+
+                        // Draw the chart and set the chart values
+                        function drawChart() {
+                            var data = google.visualization.arrayToDataTable(
+                                merged
+                            );
+
+                            var options = {
+                                'title': 'Graphical Visualization',
+                                'width': 900,
+                                'height': 600
+                            };
+                            // Display the chart inside the <div> element with id="piechart"
+                            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+                            chart.draw(data, options);
+                        }
+                    });
+                }, 2000);
+            }//end
+        });
+
+
+</script>

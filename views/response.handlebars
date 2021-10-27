@@ -71,19 +71,28 @@
         if (curr[len - 1] == 'T') {
           var qs = doc.data().qs;
 
+
           additional = document.createElement("div");
           additional.className = 'textType';
           additional.innerHTML += `
                       <p class="hi">  </p>
                       <div class="sample-text">
                             Type your answer here
-                          </div>
+                      </div>
                       <div class="seperator">
+                      </div>
+                      <div class="question-control">
+                        <button type="button" id="response_details" data-id="curr" onclick="viewQueResponse(this)" style="margin-left: 6px;">View Details</button>
+                        <div class="attempted">
+                        
+                        </div>
+                      </div>
                    
                        `
 
           additional.classList.add("box");
           mainContainer.appendChild(additional);
+          mainContainer.childNodes[count].childNodes[7].childNodes[1].setAttribute("data-id", curr);
 
           mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
           fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
@@ -92,6 +101,8 @@
 
         if (curr[len - 1] == 'U') {
           var qs = doc.data().qs;
+
+
           additional = document.createElement("div");
           additional.className = 'uploadType';
           additional.innerHTML = `
@@ -103,10 +114,17 @@
                     <div class="seperator">
 
                     </div>
+                    <div class="question-control">
+                        <button type="button" onclick="viewQueResponse(this)" id="response_details" style="margin-left: 6px;">View Details</button>
+                        <div class="attempted">
+                        
+                        </div>
+                      </div>
                     `;
 
           additional.classList.add("box");
           mainContainer.appendChild(additional);
+          mainContainer.childNodes[count].childNodes[7].childNodes[1].setAttribute("data-id", curr);
 
           mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
           fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
@@ -115,6 +133,8 @@
 
         if (curr[len - 1] == 'O') {
           var qs = doc.data().qs;
+
+
           additional = document.createElement("div");
 
           additional.className = "mcqType";
@@ -127,9 +147,17 @@
                       </div>
                     </div>
                     <div class="seperator"></div>
+                    <div class="question-control">
+                        <button type="button" onclick="viewQueResponse(this)" id="response_details" style="margin-left: 6px;">View Details</button>
+                        <div class="attempted">
+                        
+                        </div>
+                    </div>
                  `
           additional.classList.add("box");
           mainContainer.appendChild(additional);
+          mainContainer.childNodes[count].childNodes[7].childNodes[1].setAttribute("data-id", curr);
+
           if (doc.data().type == 'single')
             qs += " <span style='color:rgb(84,79,79); font-size:14px'>(single correct type)</span>"
           else qs += " <span style='color:rgb(84,79,79); font-size:14px'>(multiple correct type)</span>"
@@ -156,6 +184,7 @@
           var min = doc.data().min;
           var max = doc.data().max;
 
+
           additional = document.createElement("div");
           additional.className = 'scaleType';
           additional.innerHTML += `
@@ -166,14 +195,20 @@
               <span style="margin-left: 20px;">max</span>
             </div>
 
-           
-
             <div class="seperator">
+            </div>
+            <div class="question-control">
+              <button type="button" onclick="viewQueResponse(this)" id="response_details" style="margin-left: 6px;">View Details</button>
+              <div class="attempted">
+                  
+              </div>
             </div>
             `;
 
           additional.classList.add("box");
           mainContainer.appendChild(additional);
+          mainContainer.childNodes[count].childNodes[7].childNodes[1].setAttribute("data-id", curr);
+
           mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
           fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
 
@@ -212,15 +247,87 @@
   //end
 
 
+  var ansid = [], ans = [], r = 0, a = 0, count1 = [];
   //extract total number of responses
+
   docRef.collection('ans').get()
     .then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        roll_arr[i] = doc.id;
-        i++;
-      });
+        roll_arr[r] = doc.id;
+        r++;
+      }); //extract roll no
+
+      db.collection("form").doc(form_timestamp).collection("ans").doc(roll_arr[0]).collection("ans_1").get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            ansid[a] = doc.id;
+            a++;
+          }); // extract ans id
+
+
+          for (var r = 0; r < ansid.length; r++) {
+
+            for (var j = 0; j < roll_arr.length; j++) {
+
+              db.collection("form").doc(form_timestamp).collection("ans").doc(roll_arr[j]).collection("ans_1").doc(ansid[r]).get()
+                .then((doc) => {
+                  var curr1 = doc.id;
+                  var len1 = curr1.length;
+                  var countIndex = curr1[len1 - 3] - 1;
+                  count1[countIndex] = count1[countIndex] || 0;
+
+
+                  if (curr1[len1 - 1] == 'T') {
+                    if (doc.data().ans != "")
+                      count1[countIndex]++;
+                  }
+
+                  if (curr1[len1 - 1] == 'O') {
+                    var op_ans = [];
+                    op_ans = doc.data().ans;
+                    for (var i = 0; i < op_ans.length; i++) {
+                      if (op_ans[i] == true) {
+                        count1[countIndex]++;
+                        break;
+                      }
+                    }
+                  }
+
+                  if (curr1[len1 - 1] == 'U') {
+                    if (doc.data().ans != "null")
+                      count1[countIndex]++;
+                  }
+
+                  if (curr1[len1 - 1] == 'S') {
+                    if (doc.data().ans != "")
+                      count1[countIndex]++;
+                  }
+
+
+                });
+            }
+          }
+        });
     });
 
+  setTimeout(function () {
+    for (var i = 0; i < count1.length; i++) {
+      var ans_deatils = mainContainer.childNodes[i + 1].childNodes[7].childNodes[3];
+      ans_deatils.innerHTML = "Student Attempted " + count1[i] + "/" + roll_arr.length;
+    }
+  }, 3000);
+
+  function viewQueResponse(that) {
+    
+    if (count1.length == 0 || roll_arr.length == 0) {
+      alert("There are no responses for this question")
+    }
+    else {
+      queId = that.getAttribute('data-id');
+      window.location.href = "/view_queresponse?form_timestamp=" + form_timestamp + "&form_title=" + form_title + "&que_Id=" + queId;
+    }
+
+  }
 
   function viewResponses() {
     if (roll_arr.length == 0) {
