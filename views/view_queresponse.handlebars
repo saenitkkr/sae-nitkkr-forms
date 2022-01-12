@@ -15,7 +15,8 @@
     const params = (new URL(document.location)).searchParams;
     var decrypted = params.get('form_timestamp');
     var form_timestamp = decrypted;
-    var decrypted_title = params.get('form_title');
+    var encrypted_title = params.get('form_title');
+    var decrypted_title=atob(encrypted_title);
     var form_title = decrypted_title;
     var decrypted_queId = params.get('que_Id');
     var queId = decrypted_queId;
@@ -155,6 +156,10 @@
                 }
 
                 setTimeout(function () {
+                   var title=document.createElement("div")
+                    title.setAttribute('class','box')
+                    title.innerHTML="Graphical Visualization"
+                    mainContainer.append(title)
                     mychart = document.createElement("div");
                     mychart.setAttribute('id', 'piechart')
                     mainContainer.appendChild(mychart);
@@ -186,9 +191,9 @@
                         );
 
                         var options = {
-                            'title': 'Graphical Visualization',
-                            'width': 900,
-                            'height': 600
+                            
+                            'width': '50%',
+                            'height': '50%'
                         };
                         // Display the chart inside the <div> element with id="piechart"
                         var chart = new google.visualization.PieChart(document.getElementById('piechart'));
@@ -227,7 +232,7 @@
                             docRef.collection("ans").doc(temp).collection("ans_1").doc(queId).get().then((doc1) => {
                                 var ans = doc1.data().ans;
                                 // file_name[j]=ans;
-
+                               if(ans!="null"){
                                 let storageRef = firebase.storage().ref(form_timestamp + "/" + roll_arr[j++] + "/" + queId[len - 3]);
                                 var this_ref = storageRef.child(ans)
 
@@ -246,6 +251,7 @@
                                     }).catch(e => {
                                         console.log('error uploading' + e);
                                     });
+                               }
 
                             });
                         });
@@ -308,6 +314,11 @@
 
                 setTimeout(function () {
 
+                   var title=document.createElement("div")
+                    title.setAttribute('class','box')
+                    title.innerHTML="Graphical Visualization"
+                    mainContainer.append(title)
+
                     mychart = document.createElement("div");
                     mychart.setAttribute('id', 'piechart')
                     mainContainer.appendChild(mychart);
@@ -336,9 +347,9 @@
                             );
 
                             var options = {
-                                'title': 'Graphical Visualization',
-                                'width': 900,
-                                'height': 600
+                                
+                                'width': '95%',
+                                'height': '95%'
                             };
                             // Display the chart inside the <div> element with id="piechart"
                             var chart = new google.visualization.PieChart(document.getElementById('piechart'));

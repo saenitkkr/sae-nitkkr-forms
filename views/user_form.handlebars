@@ -1,4 +1,4 @@
-<div onload="doSetup()" style="width:100%;">
+<div onload="doSetup()" style="width:100%;padding:0;">
   <div class="container">
     <div class="box form_title">
       <div id="title"></div>
@@ -6,7 +6,10 @@
     </div>
 
     <form id="main">
-      <input type="number" min="1" class="ID" id="op" data-id="ok" placeholder="Roll Number" required>
+      <div class="box">
+         <input type="number" min="1" class="ID " id="op" data-id="ok" placeholder="Roll Number" required>
+      </div>
+     
     </form>
     <div class="loader">
 
@@ -20,7 +23,7 @@
 
   const batch = db.batch()
   const params = (new URL(document.location)).searchParams;
-  var decrypted = atob(params.get('form_timestamp'));
+   var decrypted = atob(params.get('form_timestamp'));
   var form_timestamp = decrypted;
   var decrypted_title = atob(params.get('form_title'));
   var form_title = decrypted_title;
@@ -53,13 +56,24 @@
     element.style.height = "1px";
     element.style.height = (element.scrollHeight - 17) + "px";
   }
-  function fn(bool, e) {
+  function fn(bool, node) {
     if (bool) {
       additional.childNodes[1].innerHTML += `<span class='star'>*</span>`;
 
-      if (additional.className != "mcqType box") {
-        additional.childNodes[3].setAttribute("data-id", "ok");
+      if (additional.className != "mcqType box" && additional.className != "scaleType box") {
+        additional.childNodes[5].setAttribute("data-id", "ok");
       }
+      if (additional.className == "scaleType box") {
+        additional.setAttribute("data-id", "ok");
+
+
+      }
+      if (additional.className == "mcqType box") {
+        additional.setAttribute("data-id", "ok");
+
+
+      }
+
     }
   }
 
@@ -92,15 +106,35 @@
           return false;
         }
       }
+      if (li[i].className == 'scaleType box') {
+        var checkRadio = li[i].querySelector(
+          'input[name="scale_opt"]:checked');
+        if (checkRadio == null) {
+          li[i].scrollIntoView({ behavior: 'smooth', block: 'end' });
+          alert("fill up required feilds ");
+          return false;
+        }
+      }
+      if(li[i].className=='mcqType box')
+      {
+         var checkRadio = li[i].querySelector(
+          'input[name="options_here"]:checked');
+        if (checkRadio == null) {
+          li[i].scrollIntoView({ behavior: 'smooth', block: 'end' });
+          alert("fill up required feilds");
+          return false;
+        }
+      }
     }
     return true;
   }
 
-  console.log(form_timestamp);
+
   var docRef = db.collection('form').doc(form_timestamp);
   var previous_roll_no = [];
   var count = 3;
-
+  var name = [];
+  var index = 0;
   docRef.get().then((doc) => {
     desc.innerHTML = doc.data().desc;
   }).catch((error) => {
@@ -115,20 +149,76 @@
     });
   });
 
+
+  function sayHi(count, doc) {
+    //alert('Hello, Mr. Universe!');
+    var video = doc.data().vid;
+    var text = doc.data().tex;
+    // console.log(video+" "+text);
+    if (video != "null") {
+      mainContainer.childNodes[count].childNodes[5].innerHTML = `
+            <iframe width="100%"  src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+      mainContainer.childNodes[count].childNodes[5].childNodes[1].src = video;
+
+            new ResizeObserver(es => {
+
+
+        var height = es[0].target.clientWidth * 315 / 560;
+        //console.log(height);
+        es[0].target.childNodes[1].style.height = `${height}px`;
+
+      }).observe(mainContainer.childNodes[count].childNodes[5]);
+    }
+    if (text != "null") {
+      mainContainer.childNodes[count].childNodes[5].innerHTML = text;
+    }
+
+  }
+
   docRef.collection("hi").get()
     .then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         var curr = doc.id;
         var len = curr.length;
+        var hui = doc.data().img;
+        var im_url = "null";
+        //var op_vro = cnt.toString();
+        let storageRef = firebase.storage().ref(form_timestamp + "/" + "img_qs" + "/");
+        if (curr[len - 1] == 'D') {
 
+          var desc = doc.data().desc;
+
+          additional = document.createElement("div");
+          additional.className = 'descType';
+          additional.innerHTML += `
+          <h3 class="hi">Hi </h3>
+          <img src="" style="width:100%" class="imimage">
+          <div></div>
+          <div class="seperator">
+            </div>
+          `
+          additional.classList.add("box");
+          mainContainer.appendChild(additional);
+          mainContainer.childNodes[count].childNodes[1].innerHTML = doc.data().desc;
+          //  console.log(doc.data().desc);
+
+          sayHi(count, doc);
+
+
+
+
+          count++;
+        }
         if (curr[len - 1] == 'T') {
           var qs = doc.data().qs;
+
 
           additional = document.createElement("div");
           additional.className = 'textType';
           additional.innerHTML += `
     
             <p class="hi">Hi </p>
+           <img src="" style="width:100%" class="imimage">
             <textarea type="text"  onkeyup="textAreaAdjust(this)" oncopy="return false" onpaste="return false" oncut="return false" placeholder="Type your answer here"></textarea>
         
             <div class="seperator">
@@ -138,7 +228,9 @@
           additional.classList.add("box");
           mainContainer.appendChild(additional);
 
+
           mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
+
           fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
 
           count++;
@@ -152,6 +244,7 @@
           additional.innerHTML = `
     
             <p class="hi">Hi</p>
+            <img src="" style="width:100%" class="imimage">
             <input type="file" onchange="checkFile(this)" class="sample-text" >
              
             <div class="seperator">
@@ -163,6 +256,7 @@
           mainContainer.appendChild(additional);
 
           mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
+
           fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
 
           count++;
@@ -176,7 +270,7 @@
           additional.className = "mcqType";
           additional.innerHTML = `
             <p class="hi">Hi</p>
-     
+            <img src="" style="width:100%" class="imimage">
             <div id="possible">
             <div class="indivisual">
             </div>
@@ -186,7 +280,11 @@
 
           additional.classList.add("box");
           mainContainer.appendChild(additional);
+
+
           mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
+
+
 
 
           fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
@@ -204,7 +302,7 @@
             data.appendChild(p2);
             data.appendChild(opt);
             oplist.push(p2)
-            mainContainer.childNodes[count].childNodes[3].childNodes[1].appendChild(data);
+            mainContainer.childNodes[count].childNodes[5].childNodes[1].appendChild(data);
           }
           oplist.forEach((ol) => {
             if (doc.data().type == 'single') {
@@ -239,7 +337,7 @@
           mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
           fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
 
-          var scale = mainContainer.childNodes[count].childNodes[3];
+          var scale = document.querySelector(".scale");
           scale.childNodes[1].innerHTML = lmin;
           scale.childNodes[3].innerHTML = lmax;
           for (var i = max; i >= min; i--) {
@@ -248,7 +346,7 @@
             data.classList.add(doc.id);
             var opt = document.createElement('input');
             opt.type = "radio";
-            opt.name = "scale_" + count;
+            opt.name = "scale_opt";
             opt.value = i;
             var optname = document.createElement('p');
             optname.innerHTML = i;
@@ -259,6 +357,10 @@
           }
           count++;
         }
+        //console.log("created tags");
+
+        //img_qs_here();
+
 
       });
       document.querySelector('.loader').style.display = "none";
@@ -266,6 +368,36 @@
     .catch((error) => {
       console.log("Error getting documents: ", error);
     });
+
+
+  async function img_qs_here() {
+    //console.log("in fn");
+    let citiesRef = docRef.collection("hi");
+    let allCities = await citiesRef.get();
+    var cnt = 3;
+    for (const doc of allCities.docs) {
+      var img = doc.data().img;
+      if (img != "null") {
+
+        let storageRef = firebase.storage().ref(form_timestamp + "/" + "img_qs" + "/" + doc.id.slice(0, doc.id.length - 2));
+
+        var starsRef = storageRef.child(img);
+        //console.log(hui);
+        // Get the download URL
+
+        var limks = await starsRef.getDownloadURL();
+        p = limks;
+        mainContainer.childNodes[cnt].childNodes[3].src = p;
+        // console.log("setted url");
+
+
+      }
+      cnt++;
+
+    }
+
+  }
+  img_qs_here();
 
   //check for selection for single correct mcq type
   function checkSelections(evt) {
@@ -318,12 +450,18 @@
               roll: ID,
             });
           }
+          if (child.className == 'descType box') {
+            db.collection('form').doc(form_timestamp).collection("ans").doc(ID).collection("ans_1").doc(String(count1) + "_D").set({
+              ans: "ImDescMyAnsDoesntMatter",
+            });
+            count1++;
+          }
 
 
           //text type
           if (child.className == 'textType box') {
             db.collection('form').doc(form_timestamp).collection("ans").doc(ID).collection("ans_1").doc(String(count1) + "_T").set({
-              ans: child.childNodes[3].value,
+              ans: child.childNodes[5].value,
             });
             count1++;
           }
@@ -331,8 +469,8 @@
           //mcq type
           if (child.className == 'mcqType box') {
             var mcq_ans = [];
-            for (var i = 1; child.childNodes[3].childNodes[1].childNodes[i] != null; i++) {
-              mcq_ans[i - 1] = child.childNodes[3].childNodes[1].childNodes[i].childNodes[0].checked;
+            for (var i = 1; child.childNodes[5].childNodes[1].childNodes[i] != null; i++) {
+              mcq_ans[i - 1] = child.childNodes[5].childNodes[1].childNodes[i].childNodes[0].checked;
 
             }
             db.collection('form').doc(form_timestamp).collection("ans").doc(ID).collection("ans_1").doc(String(count1) + "_O").set({
@@ -347,16 +485,19 @@
 
           if (child.className == 'uploadType box') {
             uploadCnt++
+            var filename = "null";
+            let file = child.childNodes[5].files[0];
+            console.log(file);
+            if (file != null) {
+              filename = file.name;
 
-            let file = child.childNodes[3].files[0];
-            const filename = file.name;
+              let this_ref = storageRef.child(filename);
 
-            let this_ref = storageRef.child(filename);
-
-            promises.push(this_ref.put(file).then(res => {
-            }).catch(e => {
-              console.log('error uploading' + e);
-            }))
+              promises.push(this_ref.put(file).then(res => {
+              }).catch(e => {
+                console.log('error uploading' + e);
+              }))
+            }
 
             db.collection('form').doc(form_timestamp).collection("ans").doc(ID).collection("ans_1").doc(String(count1) + "_U").set({
               ans: filename,
@@ -368,21 +509,19 @@
 
           //linear scale
           if (child.className == 'scaleType box') {
-            
+            var lans = "null"
             for (var i = 3; child.childNodes[3].childNodes[i].childNodes[1] != null; i++) {
-                console.log(child.childNodes[3].childNodes[i].childNodes[1]);
 
               if (child.childNodes[3].childNodes[i].childNodes[1].checked == true) {
-                var lans = child.childNodes[3].childNodes[i].childNodes[1].value; 
+                console.log(child.childNodes[3].childNodes[i].childNodes[1].value)
+                lans = child.childNodes[3].childNodes[i].childNodes[1].value;
               }
-              //child.childNodes[3].childNodes[i].childNodes[1].checked = false;
-
             }
             db.collection('form').doc(form_timestamp).collection("ans").doc(ID).collection("ans_1").doc(String(count1) + "_S").set({
               ans: lans,
 
             });
-            count1++;  
+            count1++;
           }
 
         }

@@ -29,17 +29,20 @@
         var date = doc.data().date;
         doc_id = doc.data().title;
         additional = document.createElement("div");
-        additional.className = 'row';;
+        additional.className = 'row';
         additional.setAttribute("data-id", String(doc.id));
         additional.innerHTML += `
-          <a  href="" id="response" class="omg" onclick="getresponse(this)" >
+           
+          <a  href="" class="response" class="omg"  onclick="getresponse(this)" >
+             
            <div class="subject"> Maths </div>
            </a>
+           
                 <div class="fixedItems">
                     <div class="date">20/07/2021</div>
                     <a  class="delete"><i class="fa fa-trash" aria-hidden="true"></i></a>
                     <a  onclick="im_csv_fn(this)" class="download"><i class="fa fa-download" aria-hidden="true"></i></a>
-                    <a  id="copylink" href=""><i class="fa fa-clipboard fa-xs" aria-hidden="true" style="font-size:30px;"></i></a>
+                    <a  class="copylink" href=""><i class="fa fa-clipboard fa-xs" aria-hidden="true" ></i></a>
                 </div> 
           `;
         brak = document.createElement("br");
@@ -76,6 +79,8 @@
                             // doc.data() is never undefined for query doc snapshots
                         });
 
+                        ///deleting uploaded ans
+
                         for (var k = 0; k < cur_roll.length; k++) {
                             let num = cur_roll[k];
                             db.collection('form').doc(id).collection("ans").doc(num).collection("ans_1").get()
@@ -83,12 +88,14 @@
                                     querySnapshot.forEach((doc) => {
 
                                         var curr = doc.id;
+                                        var ans=doc.data().ans;
                                         var len = curr.length;
+
                                         if (curr[len - 1] == 'U') {
 
 
                                             let storageRef = firebase.storage().ref(id + "/" + num + "/" + curr[len - 3] + "/");
-                                            let this_ref = storageRef.child('ans');
+                                            let this_ref = storageRef.child(ans);
                                             this_ref.delete().then(() => {
                                                 console.log("Delete Successfully");
                                             }).catch((error) => {
@@ -99,7 +106,31 @@
                                     });
                                 });
                         }
+
+
+
                     });
+                db.collection('form').doc(id).collection("hi").get()
+                    .then((querySnapshot) => {
+                        querySnapshot.forEach((doc) => {
+                            var img = doc.data().img;
+                            var curr = doc.id;
+                            var len = curr.length;
+                            if (img != "null") {
+                                let storageRef = firebase.storage().ref(id + "/" + "img_qs" + "/" + curr[len - 3] + "/");
+                                let this_ref = storageRef.child(img);
+                                this_ref.delete().then(() => {
+                                    console.log("Delete Successfully");
+                                }).catch((error) => {
+                                    console.log("Error getting documents: ", error);
+                                });
+                            }
+
+                        })
+
+                    });
+
+
 
                 docRef.doc(id).collection("hi").get().then((querySnapshot) => {
                     querySnapshot.forEach((doc1) => {
@@ -109,7 +140,22 @@
                 });
                 docRef.doc(id).collection("ans").get().then((querySnapshot) => {
                     querySnapshot.forEach((doc1) => {
+                        // console.log(doc1.id+" h");
+                        docRef.doc(id).collection("ans").doc(doc1.id).collection("ans_1").get().then((realDoc) => {
+                            console.log(realDoc);
+                            realDoc.forEach((dol) => {
+
+                                console.log('hi ' + dol.id);
+
+                                docRef.doc(id).collection("ans").doc(doc1.id).collection("ans_1").doc(dol.id).delete();
+                                //dol.delete();
+
+                            })
+
+                        })
+
                         docRef.doc(id).collection("ans").doc(doc1.id).delete();
+                        //  docRef.doc(id).collection("ans").doc(doc1.id).collection("ans_"+doc1.id).delete();
                         // doc.data() is never undefined for query doc snapshots
                     });
                 });
@@ -124,10 +170,11 @@
 
             var encrypted = btoa(form_timestamp);
             var decrypted = atob(encrypted);
-            var encrypted_title = btoa(form_title);
+           var encrypted_title = btoa(form_title);
             var decrypted_title = atob(encrypted_title);
             var temp = "/userForm?form_timestamp=" + encrypted + "&form_title=" + encrypted_title;
             e.target.parentElement.href = temp;
+
             copyText = e.target.parentElement.href;
             navigator.clipboard.writeText(copyText);
             alert("Copied the text: " + copyText);
@@ -162,7 +209,7 @@
 
     function getresponse(title) {
         var form_title = title.innerHTML;
-        var form_timestamp = title.parentElement.getAttribute("data-id");
+                var form_timestamp = title.parentElement.getAttribute("data-id");
         var encrypted = btoa(form_timestamp);
         var decrypted = atob(encrypted);
         var encrypted_title = btoa(form_title);
@@ -176,7 +223,7 @@
     async function im_csv_fn(that) {
         roll_no = []
         // Await for the promise to resolve
-        console.log(that.parentElement.parentElement.getAttribute('data-id'));
+         console.log(that.parentElement.parentElement.getAttribute('data-id'));
         let citiesRef = db.collection("form").doc(that.parentElement.parentElement.getAttribute('data-id')).collection("ans");
         let allCities = await citiesRef.get();
         for (const doc of allCities.docs) {
@@ -185,13 +232,13 @@
         }
 
         for (var i = 0; i < roll_no.length; i++) {
-            let citiesRef = db.collection("form").doc(that.parentElement.parentElement.getAttribute('data-id')).collection("ans").doc(roll_no[i]).collection("ans_1");
+             let citiesRef = db.collection("form").doc(that.parentElement.parentElement.getAttribute('data-id')).collection("ans").doc(roll_no[i]).collection("ans_1");
             let allCities = await citiesRef.get();
             for (const doc of allCities.docs) {
                 var p = doc.data().ans;
                 var x = doc.id;
                 if (p == "pdf") {
-                    let storageRef = firebase.storage().ref(that.parentElement.parentElement.getAttribute('data-id') + "/" + roll_no[i] + "/" + x.slice(0, x.length - 2));
+                     let storageRef = firebase.storage().ref(that.parentElement.parentElement.getAttribute('data-id') + "/" + roll_no[i] + "/" + x.slice(0, x.length - 2));
                     let this_ref = storageRef.child('ans');
 
                     var limks = await this_ref.getDownloadURL();

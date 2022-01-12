@@ -4,9 +4,20 @@
   
   body {
     font-family: Arial, helvetica, sans-serif;
-    width:100%;
+    width:90vw;
+    overflow-x:hidden ;
+    
   }
-  
+  @media screen and (min-width: 500px){
+    body{
+      width: 95vw;
+    }
+  }
+  @media screen and (min-width: 1000px){
+    body{
+      width: 97vw;
+    }
+  }
   .container{
     padding-top: 50px;
     max-width:700px;
@@ -24,7 +35,6 @@
   }
   .box {
     color: black;
-    padding: 10px;
     background-color:rgb(243, 245, 235);
     padding: 10px;
     padding-left:25px;
@@ -179,7 +189,7 @@
   color:white;
   }
   .question-control{
-    width: 250px;
+    width: 50%;
     height: 100px;
     margin-left:60%;
   }
@@ -241,6 +251,30 @@
   .delete:hover, .copy_question:hover, .add_picture:hover{
     color:black;
   }
+  .text{
+    cursor: pointer;
+    font-size: 25px;
+    /* margin-left: 120px;  */
+    padding:5px;
+    float: left;
+    width:30px;
+    color: rgb(136, 135, 135);
+  }
+  .text:hover, .copy_question:hover, .add_picture:hover{
+    color:black;
+  }
+  .videoLimk{
+    cursor: pointer;
+    font-size: 25px;
+    /* margin-left: 120px;  */
+    padding:5px;
+    float: left;
+    width:30px;
+    color: rgb(136, 135, 135);
+  }
+  .videoLimk:hover, .copy_question:hover, .add_picture:hover{
+    color:black;
+  }
   
   .plus{
   font-size: 25px;
@@ -296,6 +330,19 @@
   color:white;
   border-radius: 10px;
   cursor: pointer;
+  }
+  .but{
+    border:1px solid green;
+    border-radius: 5px;
+    margin:6px;
+    
+  }
+ 
+ 
+  #currentRes{
+    width: 1.5rem;
+    font-size: 1.5rem;
+      
   }
 
   .create-button:hover{
@@ -381,16 +428,7 @@
   .toggle-response{
     cursor: pointer;
   }
-  .ID{
-    background-color: rgb(243, 245, 235);
-    border-radius: 12px;
-    margin-top:10px;
-    padding-left:25px;
-    width: 94%;
-    height:40px;
-    margin-bottom: 0px;
-    color:rgb(82, 75, 75);
-  }
+  
   @media screen and (max-width: 1050px) {
   .container{
     padding-top: 50px;
@@ -442,4 +480,13 @@
     margin: 0px;
   } */
 
-  
+  input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
+.attempted{
+  font-size: 0.8rem;
+}

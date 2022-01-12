@@ -35,7 +35,6 @@
   const title = document.querySelector('#title');
   const desc = document.querySelector('#desc');
   title.innerHTML = form_title;
-  // console.log(form_title,form_timestamp)
 
   //to check required field
   function fn(bool, e) {
@@ -56,6 +55,42 @@
     console.log("Error getting document:", error);
   });
 
+  function sayHi(count, doc) {
+    //alert('Hello, Mr. Universe!');
+    var video = doc.data().vid;
+    var text = doc.data().tex;
+    //console.log(video+" "+text);
+    if (video != "null") {
+      mainContainer.childNodes[count].childNodes[5].innerHTML = `
+            <iframe width="100%"  src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+      mainContainer.childNodes[count].childNodes[5].childNodes[1].src = video;
+
+
+
+
+
+      new ResizeObserver(es => {
+
+
+        var height = es[0].target.clientWidth * 315 / 560;
+        //console.log(height);
+        es[0].target.childNodes[1].style.height = `${height}px`;
+
+      }).observe(mainContainer.childNodes[count].childNodes[5]);
+    }
+
+
+
+
+
+
+    if (text != "null") {
+      mainContainer.childNodes[count].childNodes[5].innerHTML = text;
+    }
+
+  }
+
+
   const main = document.querySelector("#main");
   var roll_arr = []; //to save roll number
   var i = 0; //to save values in roll_arr
@@ -68,31 +103,58 @@
         var curr = doc.id;
         var len = curr.length;
 
+        if (curr[len - 1] == 'D') {
+
+          var desc = doc.data().desc;
+
+          additional = document.createElement("div");
+          additional.className = 'descType';
+          additional.innerHTML += `
+          <h3 class="hi">Hi </h3>
+          <img src="" style="width:100%" class="imimage">
+          <div></div>
+          <div class="seperator">
+            </div>
+          `
+          additional.classList.add("box");
+          mainContainer.appendChild(additional);
+          mainContainer.childNodes[count].childNodes[1].innerHTML = doc.data().desc;
+          // console.log(doc.data().desc);
+
+          sayHi(count, doc);
+
+
+
+
+          count++;
+        }
+
         if (curr[len - 1] == 'T') {
           var qs = doc.data().qs;
-
 
           additional = document.createElement("div");
           additional.className = 'textType';
           additional.innerHTML += `
                       <p class="hi">  </p>
+                      <img src="" style="width:100%" class="imimage">
                       <div class="sample-text">
                             Type your answer here
-                      </div>
+                          </div>
                       <div class="seperator">
-                      </div>
+                    </div>
                       <div class="question-control">
-                        <button type="button" id="response_details" data-id="curr" onclick="viewQueResponse(this)" style="margin-left: 6px;">View Details</button>
-                        <div class="attempted">
-                        
+                        <button type="button" id="response_details"  onclick="viewQueResponse(this)" style="margin-left: 6px;">View Details</button>
+                        <div class="attempted">                    	
                         </div>
                       </div>
-                   
                        `
 
           additional.classList.add("box");
           mainContainer.appendChild(additional);
-          mainContainer.childNodes[count].childNodes[7].childNodes[1].setAttribute("data-id", curr);
+
+          mainContainer.childNodes[count].childNodes[9].childNodes[1].setAttribute("data-id1", curr);
+
+
 
           mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
           fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
@@ -101,30 +163,35 @@
 
         if (curr[len - 1] == 'U') {
           var qs = doc.data().qs;
-
-
           additional = document.createElement("div");
           additional.className = 'uploadType';
           additional.innerHTML = `
     
                     <p class="hi">Hi</p>
+                    <img src="" style="width:100%" class="imimage">
                      <div class="sample-text">
                       Upload file
                     </div>
                     <div class="seperator">
 
                     </div>
-                    <div class="question-control">
+                     <div class="question-control">
+
                         <button type="button" onclick="viewQueResponse(this)" id="response_details" style="margin-left: 6px;">View Details</button>
+
                         <div class="attempted">
+
                         
+
                         </div>
+
                       </div>
                     `;
 
           additional.classList.add("box");
           mainContainer.appendChild(additional);
-          mainContainer.childNodes[count].childNodes[7].childNodes[1].setAttribute("data-id", curr);
+
+          mainContainer.childNodes[count].childNodes[9].childNodes[1].setAttribute("data-id1", curr);
 
           mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
           fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
@@ -133,13 +200,12 @@
 
         if (curr[len - 1] == 'O') {
           var qs = doc.data().qs;
-
-
           additional = document.createElement("div");
 
           additional.className = "mcqType";
           additional.innerHTML = `
                     <p class="hi">Hi</p>
+                    <img src="" style="width:100%" class="imimage">
      
                     <div id="possible">
                       <div class="indivisual">
@@ -147,16 +213,22 @@
                       </div>
                     </div>
                     <div class="seperator"></div>
-                    <div class="question-control">
+                     <div class="question-control">
+
                         <button type="button" onclick="viewQueResponse(this)" id="response_details" style="margin-left: 6px;">View Details</button>
+
                         <div class="attempted">
+
                         
+
                         </div>
+
                     </div>
                  `
           additional.classList.add("box");
           mainContainer.appendChild(additional);
-          mainContainer.childNodes[count].childNodes[7].childNodes[1].setAttribute("data-id", curr);
+
+          mainContainer.childNodes[count].childNodes[9].childNodes[1].setAttribute("data-id1", curr);
 
           if (doc.data().type == 'single')
             qs += " <span style='color:rgb(84,79,79); font-size:14px'>(single correct type)</span>"
@@ -172,7 +244,7 @@
             opt.classList.add('res-opts');
             opt.innerHTML = "  " + i + ") " + option[i - 1];
             data.appendChild(opt);
-            mainContainer.childNodes[count].childNodes[3].childNodes[1].appendChild(data);
+            mainContainer.childNodes[count].childNodes[5].childNodes[1].appendChild(data);
           }
           count++;
         }
@@ -184,39 +256,42 @@
           var min = doc.data().min;
           var max = doc.data().max;
 
-
           additional = document.createElement("div");
           additional.className = 'scaleType';
           additional.innerHTML += `
     
             <p class="hi">Hi </p>
-            <div class="scale" style="display:flex; align-items:center; justify-content:left;" data-id="que-id"> 
+            <div class="scale" style="display:flex; align-items:center; justify-content:left;" data-id="que-id">
               <span style="margin-right: 20px;">min</span>
               <span style="margin-left: 20px;">max</span>
             </div>
 
+           
+
             <div class="seperator">
             </div>
+             </div>
+
             <div class="question-control">
+
               <button type="button" onclick="viewQueResponse(this)" id="response_details" style="margin-left: 6px;">View Details</button>
+
               <div class="attempted">
+
                   
+
               </div>
-            </div>
             `;
 
           additional.classList.add("box");
           mainContainer.appendChild(additional);
-          mainContainer.childNodes[count].childNodes[7].childNodes[1].setAttribute("data-id", curr);
+
+          mainContainer.childNodes[count].childNodes[7].childNodes[1].setAttribute("data-id1", curr);
 
           mainContainer.childNodes[count].childNodes[1].innerHTML = qs;
           fn(doc.data().req, mainContainer.childNodes[count].childNodes[1]);
 
-
-
-          var scale = mainContainer.childNodes[count].childNodes[3];
-          //scale.setAttribute("data-id", count);
-
+          var scale = document.querySelector(".scale");
           scale.childNodes[1].innerHTML = lmin;
           scale.childNodes[3].innerHTML = lmax;
           for (var i = max; i >= min; i--) {
@@ -243,98 +318,182 @@
     .catch((error) => {
       console.log("Error getting documents: ", error);
     });
+  async function img_qs_here() {
+    //console.log("in fn");
+    let citiesRef = docRef.collection("hi");
+    let allCities = await citiesRef.get();
+    var cnt = 1;
+    for (const doc of allCities.docs) {
+      var img = doc.data().img;
+      if (img != "null") {
+
+        let storageRef = firebase.storage().ref(form_timestamp + "/" + "img_qs" + "/" + doc.id.slice(0, doc.id.length - 2));
+
+        var starsRef = storageRef.child(img);
+        //console.log(hui);
+        // Get the download URL
+
+        var limks = await starsRef.getDownloadURL();
+        p = limks;
+        mainContainer.childNodes[cnt].childNodes[3].src = p;
+        // console.log("setted url");
+
+
+      }
+      cnt++;
+
+    }
+
+  }
+  img_qs_here();
 
   //end
 
-
   var ansid = [], ans = [], r = 0, a = 0, count1 = [];
   //extract total number of responses
-
   docRef.collection('ans').get()
     .then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         roll_arr[r] = doc.id;
         r++;
+
+
+        r++;
+
       }); //extract roll no
 
+
       db.collection("form").doc(form_timestamp).collection("ans").doc(roll_arr[0]).collection("ans_1").get()
+
         .then((querySnapshot) => {
+
           querySnapshot.forEach((doc) => {
+
             ansid[a] = doc.id;
+
             a++;
+
           }); // extract ans id
+
 
 
           for (var r = 0; r < ansid.length; r++) {
 
+
             for (var j = 0; j < roll_arr.length; j++) {
 
+
               db.collection("form").doc(form_timestamp).collection("ans").doc(roll_arr[j]).collection("ans_1").doc(ansid[r]).get()
+
                 .then((doc) => {
+
                   var curr1 = doc.id;
+
                   var len1 = curr1.length;
+
                   var countIndex = curr1[len1 - 3] - 1;
+
                   count1[countIndex] = count1[countIndex] || 0;
 
 
+
                   if (curr1[len1 - 1] == 'T') {
+
                     if (doc.data().ans != "")
+
                       count1[countIndex]++;
+
                   }
+
 
                   if (curr1[len1 - 1] == 'O') {
+
                     var op_ans = [];
+
                     op_ans = doc.data().ans;
+
                     for (var i = 0; i < op_ans.length; i++) {
+
                       if (op_ans[i] == true) {
+
                         count1[countIndex]++;
+
                         break;
+
                       }
+
                     }
+
                   }
+
 
                   if (curr1[len1 - 1] == 'U') {
+
                     if (doc.data().ans != "null")
+
                       count1[countIndex]++;
+
                   }
+
 
                   if (curr1[len1 - 1] == 'S') {
+
                     if (doc.data().ans != "")
+
                       count1[countIndex]++;
+
                   }
-
-
                 });
+
             }
+
           }
         });
     });
 
   setTimeout(function () {
+
     for (var i = 0; i < count1.length; i++) {
-      var ans_deatils = mainContainer.childNodes[i + 1].childNodes[7].childNodes[3];
-      ans_deatils.innerHTML = "Student Attempted " + count1[i] + "/" + roll_arr.length;
+
+      if (mainContainer.childNodes[i + 1].className != "descType box") {
+        var iChange = 9
+        if (mainContainer.childNodes[i + 1].className == "scaleType box")
+          iChange = 7
+        //console.log(mainContainer.childNodes[i + 1].className+" "+iChange)
+        var ans_deatils = mainContainer.childNodes[i + 1].childNodes[iChange].childNodes[3];
+
+        ans_deatils.innerHTML = "Student Attempted " + count1[i] + "/" + roll_arr.length;
+      }
     }
+
   }, 3000);
 
   function viewQueResponse(that) {
-    
+
     if (count1.length == 0 || roll_arr.length == 0) {
+
       alert("There are no responses for this question")
+
     }
+
     else {
-      queId = that.getAttribute('data-id');
-      window.location.href = "/view_queresponse?form_timestamp=" + form_timestamp + "&form_title=" + form_title + "&que_Id=" + queId;
+
+      queId = that.getAttribute('data-id1');
+      var encrypted = btoa(form_title);
+      window.location.href = "/view_queresponse?form_timestamp=" + form_timestamp + "&form_title=" + encrypted + "&que_Id=" + queId;
+
     }
 
   }
+
 
   function viewResponses() {
     if (roll_arr.length == 0) {
       alert("There are no responses for this form!")
     }
     else {
-      window.location.href = "/view_response?form_timestamp=" + form_timestamp + "&form_title=" + form_title;
+      var encrypted = btoa(form_title);
+      window.location.href = "/view_response?form_timestamp=" + form_timestamp + "&form_title=" + encrypted;
     }
   }
 

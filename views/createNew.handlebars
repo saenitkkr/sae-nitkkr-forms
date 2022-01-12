@@ -11,6 +11,7 @@
       <div class="add-elements">
         add
       </div>
+      <i class="fa fa-outdent" aria-hidden="true" id="description" ></i>
       <i class="fa fa-list-ol ic" aria-hidden="true" id="multiple"></i>
       <i class="fa fa-paragraph ic" aria-hidden="true" id="paragraph"></i>
       <i class="fa fa-file ic" aria-hidden="true" id="fileUpload"></i>
@@ -35,9 +36,9 @@
               aria-hidden="true"></i></button>
           <div class="required">
             <span>Required</span>
-            <input type="checkbox" id="switch" class="checkbox" />
-            <label for="switch" class="toggle" onclick="fn(this)">
-              <label class="toggleHelper"></label>
+            <input type="checkbox"  class="checkbox" />
+            <label  class="toggle" onclick="fn(this)">
+              <label class="toggleHelper" ></label>
             </label>
           </div>
           <div class="delete"><i class="fa fa-trash-o add" aria-hidden="true"></i></div>
@@ -50,17 +51,24 @@
         </div>
       </div> --}}
     </form>
+      <div id="loader">
+
+        </div>
 
     <div class="result">
       <div class="create-button" id="submit_form">Create</div>
-      <a href='/form'>
-        <div class="cancel-button">Cancel</div>
-      </a>
+      
+        <div class="cancel-button" id="cancel_form" onclick="hi()">Cancel</div>
+      
     </div>
   </div>
 </div>
 
 <script>
+  
+  function hi(){window.location.href="/form"};
+
+  let addDescription = document.getElementById('description');
   let addMCQQuestion = document.getElementById('multiple');
   let addParaQuestion = document.getElementById('paragraph');
   let fileUploadQuestion = document.getElementById('fileUpload');
@@ -86,7 +94,7 @@
   }
   function doSetup() {
     setupDeleteButtons();
-    setupToggles();
+    //setupToggles();
   }
 
   let getSiblings = function (e) {
@@ -114,15 +122,23 @@
   }
 
   function setupCopyButtons(pr, type = "") {
-    var n1 = 7, n2 = 9
+    //console.log(pr.className);
+    var n1 = 9, n2 = 9
     if (type == 'mcq') {
-      n1 = 9
+      n1 = 11
       n2 = 11
     }
     if (type == 'scale') {
       n1 = 11
       n2 = 9
     }
+    if(type=='desc')
+    {
+      n1=7;
+      n2=7;
+    }
+    //console.log(pr.childNodes[n1].className);
+
     pr.childNodes[n1].childNodes[n2].addEventListener('click', (evt) => {
       el = evt.currentTarget.parentNode.parentNode
       var tp = ""
@@ -130,13 +146,19 @@
       el.parentNode.insertBefore(newel, el.nextSibling)
       if (el.classList.contains('scaleType'))
         tp = 'scale'
+      if(el.classList.contains('descType'))
+      {
+        tp='desc';
+      }  
       if (el.classList.contains('mcqType')) {
         tp = 'mcq'
+      
+
         let options = document.getElementsByClassName('option');
         options[options.length - 1].addEventListener('click', (e) => {
           cheating = document.createElement("div");
           cheating.classList.add('indivisual')
-          cheating.innerHTML = ` <input class="option-input nullCheck" placeholder = "Option"><button class="option_delete" type="button">X</button>`;
+          cheating.innerHTML = ` <input class="option-input nullCheck" placeholder = "Option"><button class="option_delete";>X</button>`;
           e.target.parentElement.nextElementSibling.appendChild(cheating);
           for (option_delete of byebye) {
             option_delete.addEventListener('click', (e) => {
@@ -147,6 +169,7 @@
       }
       setupCopyButtons(newel, tp)
       setupDeleteButtons();
+      if(!el.classList.contains('descType'))
       setupToggles();
     })
   }
@@ -160,8 +183,9 @@
     let toggles = document.getElementsByClassName("toggle");
     let toggleHelpers = document.getElementsByClassName("toggleHelper");
 
-    toggleHelpers[toggleHelpers.length - 1].addEventListener('click', (event) => {
-      event.stopPropagation();
+    toggleHelpers[toggleHelpers.length - 1].addEventListener('click', (e) => {
+      
+      e.stopPropagation();
     })
 
     toggles[toggles.length - 1].addEventListener('click', (e) => {
@@ -182,12 +206,115 @@
     })
   }
 
+  function desc_text_setup(e)
+  {  var img_erase=e.parentNode;
+    var img=img_erase.querySelector(".img_qs");
+    img.value="";
+    ////img.value="" necessary becoz on upload there is onchange fn which blocks upload of same file again. 
+    e.parentNode.previousElementSibling.previousElementSibling.childNodes[1].src="";
+    //console.log(e.parentNode.previousElementSibling.previousElementSibling.childNodes[1].className);
+      e.parentNode.previousElementSibling.innerHTML=`
+      <input type="text" class="hui" placeholder="Text"  />
+      `;
+      e.parentNode.previousElementSibling.childNodes[1].value="";
+      e.parentNode.previousElementSibling.className="txt";
 
+  }
+  function desc_videoLimk_setup(e)
+  {
+    var img_erase=e.parentNode;
+    var img=img_erase.querySelector(".img_qs");
+    img.value="";
+    e.parentNode.previousElementSibling.previousElementSibling.childNodes[1].src="";
+    e.parentNode.previousElementSibling.innerHTML=`
+    <input type="text" class="hui" placeholder="Embed Url"  />
+     <button type="button" class="but" onclick="desc_videoLimk_set_url(this)" class="iuh" > set url</button>
+    `
+    e.parentNode.previousElementSibling.childNodes[1].value="";
+    e.parentNode.previousElementSibling.className="limk_setup";
+
+  }
+
+  function desc_videoLimk_set_url(e)
+  {
+    //console.log(e.previousElementSibling.previousElementSibling.childNodes[1].id);
+    
+    var x=e.previousElementSibling.value;
+    var p=e.parentNode;
+    p.innerHTML=`
+    <iframe width="560" height="315" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+//console.log(e.previousElementSibling.value);
+p.childNodes[1].src=x;
+p.className="iframe";
+
+   
+
+  }
+
+  function loadFile(nodee, img_here) {  //nodee.parentNode.innerHTML+="ok";
+   var image = nodee.parentNode.parentNode.parentNode.parentNode;
+    
+     if(nodee.parentNode.parentNode.parentNode.parentNode.className=="descType box")
+     {
+       image.childNodes[5].innerHTML=``;
+     }
+    //console.log(image.className);
+    var g = image.querySelector(".img_show");
+    //console.log(g.className);
+    g.querySelector("img").src = URL.createObjectURL(img_here.target.files[0]);
+  }
+
+
+  addDescription.addEventListener('click', () => {
+     //alert("description feature blocked currently :( under error removal process");
+    
+    additional = document.createElement("div");
+    additional.className = 'descType';
+    additional.innerHTML = `
+    <input type="text" placeholder="Description" class="nullCheck" />
+       <div class="img_show">
+        <img src="" style="width:100%">
+      </div>
+     
+      <div></div>
+
+       <div class="question-control">
+        
+     
+        
+        
+      <div class="text" onclick="desc_text_setup(this)"><i class="fa fa-font" aria-hidden="true"></i></div>
+
+          <div class="videoLimk" onclick="desc_videoLimk_setup(this)"><i class="fa fa-youtube" aria-hidden="true"></i></div>
+
+       <div class="delete"><i class="fa fa-trash-o add" aria-hidden="true"></i></div>
+        <div class="copy_question">
+          <i class="fa fa-clone" aria-hidden="true"></i>
+        </div>
+      
+          <div class="add_picture">
+         <label style="cursor: pointer;"><input type="file" class="img_qs"  accept="image/*" placeholder="Upload Image"  onchange="loadFile(this,event)" style="display:none;"> <i class="fa fa-picture-o" aria-hidden="true" ></i></label>
+          
+          </div>
+          </div>
+      </div>
+
+    `
+    additional.classList.add("box");
+    mainContainer.appendChild(additional);
+    setupDeleteButtons();
+
+    setupCopyButtons(additional, "desc");
+    
+  })
   addParaQuestion.addEventListener('click', () => {
     additional = document.createElement("div");
     additional.className = 'textType';
     additional.innerHTML = `
       <input type="text" placeholder="Question" class="nullCheck" />
+      <div class="img_show">
+        <img src="" style="width:100%">
+      </div>
       <div class="sample-text">
         Type your answer here
       </div>
@@ -201,9 +328,9 @@
         <button class="down" onclick="niche(parentNode.parentNode)" type="button"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>
         <div class="required">
           <span>Required</span>
-          <input type="checkbox" id="switch" class="checkbox"  />
-          <label for="switch"  class="toggle" onclick="fn(this)" >
-          <label class="toggleHelper"></label>
+          <input type="checkbox"  class="checkbox"  />
+          <label   class="toggle" onclick="fn(this)" >
+          <label class="toggleHelper" onclick="fn1(this)" ></label>
          
         </label>
         </div>
@@ -211,8 +338,10 @@
         <div class="copy_question">
           <i class="fa fa-clone" aria-hidden="true"></i>
         </div>
-        <div class="add_picture">
-            <i class="fa fa-picture-o" aria-hidden="true" ></i>
+      
+          <div class="add_picture">
+         <label style="cursor: pointer;"><input type="file" class="img_qs"  accept="image/*" placeholder="Upload Image"  onchange="loadFile(this,event)" style="display:none;"> <i class="fa fa-picture-o" aria-hidden="true" ></i></label>
+          
           </div>
       </div>
   `
@@ -229,7 +358,9 @@
     additional.className = "uploadType";
     additional.innerHTML = `
     <input type="text" placeholder="Question" class="nullCheck">
-    
+    <div class="img_show">
+        <img src="" style="width:100%">
+      </div>
     <div class="sample-text">
       Upload file
     </div>
@@ -240,9 +371,9 @@
       <button class="down" onclick="niche(parentNode.parentNode)" type="button"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>
       <div class="required">
         <span>Required</span>
-         <input type="checkbox" id="switch" class="checkbox"  />
-          <label for="switch"  class="toggle" onclick="fn(this)" >
-        <label class="toggleHelper"></label>
+         <input type="checkbox"  class="checkbox"  />
+          <label   class="toggle" onclick="fn(this)" >
+        <label class="toggleHelper" onclick="fn1(this)"></label>
         
       </label>
       </div>
@@ -250,6 +381,10 @@
       <div class="copy_question">
           <i class="fa fa-clone" aria-hidden="true"></i>
         </div>
+        <div class="add_picture">
+         <label style="cursor: pointer;"><input type="file" class="img_qs"  accept="image/*" placeholder="Upload Image"  onchange="loadFile(this,event)" style="display:none;"> <i class="fa fa-picture-o" aria-hidden="true" ></i></label>
+          
+          </div>
     </div>
   `
     additional.classList.add("box");
@@ -265,6 +400,9 @@
     additional.className = "mcqType";
     additional.innerHTML = `
       <input  type="text" placeholder="Question" class="nullCheck">
+      <div class="img_show">
+        <img src="" style="width:100%">
+      </div>
       <div class="plus"><i class="fa fa-plus option" aria-hidden="true"></i></div>
       <div id="possible">
         <div class="indivisual">
@@ -281,9 +419,9 @@
         <button class="down" onclick="niche(parentNode.parentNode)" type="button"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>
         <div class="required">
           <span>Required</span>
-          <input type="checkbox" id="switch" class="checkbox" />
-          <label for="switch" class="toggle">
-          <label class="toggleHelper"></label>
+          <input type="checkbox"  class="checkbox" />
+          <label  class="toggle" onclick="fn(this)">
+          <label class="toggleHelper" onclick="fn1(this)" ></label>
         </label>
         </div>
 
@@ -291,9 +429,11 @@
         <div class="copy_question">
           <i class="fa fa-clone" aria-hidden="true"></i>
         </div>
-        <div class="add_picture">
-            <i class="fa fa-picture-o" aria-hidden="true" ></i>
+       <div class="add_picture">
+         <label style="cursor: pointer;"><input type="file" class="img_qs"  accept="image/*" placeholder="Upload Image"  onchange="loadFile(this,event)" style="display:none;"> <i class="fa fa-picture-o" aria-hidden="true" ></i></label>
+          
           </div>
+          
       </div>`
     additional.classList.add("box");
     mainContainer.appendChild(additional);
@@ -305,7 +445,7 @@
     options[options.length - 1].addEventListener('click', (e) => {
       cheating = document.createElement("div");
       cheating.classList.add('indivisual')
-      cheating.innerHTML = ` <input class="option-input nullCheck" placeholder = "Option"><button class="option_delete";>X</button>`;
+      cheating.innerHTML = ` <input class="option-input nullCheck" placeholder = "Option"><button class="option_delete"   type="button">X</button>`;
       e.target.parentElement.nextElementSibling.appendChild(cheating);
       for (option_delete of byebye) {
         option_delete.addEventListener('click', (e) => {
@@ -319,6 +459,8 @@
   })
 
   linearScale.addEventListener('click', () => {
+     //alert("scalean feature blocked currently :( under error removal process");
+    
     additional = document.createElement("div");
     additional.className = 'scaleType';
     additional.innerHTML = `
@@ -342,8 +484,8 @@
         </select>
       </div>
 
-       <input type="text" id="minLable" placeholder="Label(min value) optional"/>
-       <input type="text" id="maxLable" placeholder="Label(max value) optional"/>
+       <input type="text" id="minLable" class="nullCheck" placeholder="Label(min value) optional"/>
+       <input type="text" id="maxLable" class="nullCheck" placeholder="Label(max value) optional"/>
 
       <div class="seperator">
 
@@ -351,14 +493,14 @@
       <div class="question-control">
         <button class="up" onclick="upar(parentNode.parentNode)" type="button"><i class="fa fa-arrow-up" aria-hidden="true"></i></button>
         <button class="down" onclick="niche(parentNode.parentNode)" type="button"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>
-        <div class="required">
-          <span>Required</span>
-          <input type="checkbox" id="switch" class="checkbox"  />
-          <label for="switch"  class="toggle" onclick="fn(this)" >
-          <label class="toggleHelper"></label>
-         
-        </label>
-        </div>
+         <div class="required">
+        <span>Required</span>
+         <input type="checkbox"  class="checkbox"  />
+          <label   class="toggle" onclick="fn(this)" >
+        <label class="toggleHelper" onclick="fn1(this)" ></label>
+        
+      </label>
+      </div>
         <div class="delete"><i class="fa fa-trash-o add" aria-hidden="true"></i></div>
         <div class="copy_question" id="element">
           <i class="fa fa-clone" aria-hidden="true"></i>
@@ -370,6 +512,7 @@
     setupDeleteButtons();
     setupToggles();
     setupCopyButtons(additional, "scale");
+    
   });
 
 
@@ -385,8 +528,12 @@
   //this se pass kra element kooo
   function fn(this_reference) {
     this_reference.previousElementSibling.checked = !this_reference.previousElementSibling.checked;
+  //  console.log(this_reference.previousElementSibling.checked );
   }
-
+  function fn1(this_ref){
+    //console.log(this_ref.parentNode);
+   this_ref.parentNode.click();
+  } 
   function null_check() {
     var text_feilds = document.getElementsByClassName("nullCheck");
     for (var i = 0; i < text_feilds.length; i++) {
@@ -433,7 +580,20 @@
     (e) => {
       if (document.querySelectorAll('div.box').length > 1) {
         var ch = null_check();
+
+
+
+
         if (ch && previous_roll_check()) {
+
+          //console.log(document.getElementById('loader'))
+          document.getElementById('loader').style.display = "block";
+          document.getElementById('submit_form').disabled=true;
+          document.getElementById('submit_form').style.backgroundColor='gray'
+          document.getElementById('cancel_form').disabled=true;
+          document.getElementById('cancel_form').style.backgroundColor='gray'
+          
+           
           var timestamp = String(new Date().getTime());
           console.log(timestamp);
           db.collection('form').doc(timestamp).set({
@@ -442,18 +602,71 @@
             date: today,
 
           });
-          var promises = []
-          for (var child = form.firstChild; child !== null; child = child.nextSibling) {
+          var promises = [];
+          var count=1;
+          for (var child = form.firstChild; child != null; child = child.nextSibling) {
+            
+            
 
+         
+
+            let storageRef = firebase.storage().ref(timestamp + "/" + "img_qs" + "/" + count);
+
+            var image_name = "null";
+            console.log(document.getElementsByClassName("img_qs").length);
+            if(child.className != 'scaleType box' && document.getElementsByClassName("img_qs").length!=0){
+             //console.log(document.getElementsByClassName("img_qs"));
+            var file = document.getElementsByClassName("img_qs")[count - 1].files[0];
+           
+            if (file != undefined) {
+              image_name = file.name;
+
+              let this_ref = storageRef.child(image_name);
+
+              promises.push(this_ref.put(file).then(res => {
+              }).catch(e => {
+                console.log('error uploading' + e);
+              }))
+            }
+            }
+            //desc type
+            if(child.className == 'descType box')
+            { var x=true;
+              var temp=count+"_D";
+              var vimdeo="null";
+              var txt="null";
+              if(image_name=="null")
+              {
+                   if(child.childNodes[5].className=='iframe')
+                   {
+                      vimdeo=child.childNodes[5].childNodes[1].src;
+                   }
+                   if(child.childNodes[5].className=='txt')
+                   {
+                    txt =child.childNodes[5].childNodes[1].value;
+                   }
+              }
+              promises.push(db.collection('form').doc(timestamp).collection("hi").doc(temp).set({
+                desc: child.childNodes[1].value,
+                req: x,
+                img: image_name,
+                vid:vimdeo,
+                tex:txt,
+
+
+              }))
+              count++;
+            }
             //text type
             if (child.className == 'textType box') {
               var temp = count + "_T";
-
               promises.push(db.collection('form').doc(timestamp).collection("hi").doc(temp).set({
                 qs: child.childNodes[1].value,
-                req: child.childNodes[7].childNodes[5].childNodes[3].checked
-
+                req: child.childNodes[9].childNodes[5].childNodes[3].checked,
+                img: image_name
               }))
+
+
               count++;
             }
 
@@ -465,19 +678,20 @@
 
               var n = 0;
 
-              for (var num = 1; child.childNodes[5].childNodes[num] != null; num++) {
-                l[n] = child.childNodes[5].childNodes[num].childNodes[1].value;
+              for (var num = 1; child.childNodes[7].childNodes[num] != null; num++) {
+                l[n] = child.childNodes[7].childNodes[num].childNodes[1].value;
                 n++;
                 if (num == 1)
                   num += 1;
               }
 
-              var mcqt = (child.childNodes[9].childNodes[1].childNodes[3].checked) ? 'single' : 'multiple'
+              var mcqt = (child.childNodes[11].childNodes[1].childNodes[3].checked) ? 'single' : 'multiple'
               promises.push(db.collection('form').doc(timestamp).collection("hi").doc(temp).set({
                 qs: child.childNodes[1].value,
                 op: l,
-                req: child.childNodes[9].childNodes[7].childNodes[3].checked,
-                type: mcqt
+                req: child.childNodes[11].childNodes[7].childNodes[3].checked,
+                type: mcqt,
+                img: image_name
               }));
               count++;
             }
@@ -487,7 +701,8 @@
               var temp = count + "_U";
               promises.push(db.collection('form').doc(timestamp).collection("hi").doc(temp).set({
                 qs: child.childNodes[1].value,
-                req: child.childNodes[7].childNodes[5].childNodes[3].checked
+                req: child.childNodes[9].childNodes[5].childNodes[3].checked,
+                img: image_name
               }));
               count++;
             }
@@ -496,7 +711,7 @@
             if (child.className == 'scaleType box') {
               var temp = count + "_S";
               var child2 = child.childNodes[3].childNodes;
-
+              console.log(child2);
 
               promises.push(db.collection('form').doc(timestamp).collection("hi").doc(temp).set({
                 qs: child.childNodes[1].value,
@@ -504,19 +719,21 @@
                 max: child.childNodes[3].childNodes[5].value,
                 lmin: child.childNodes[5].value,
                 lmax: child.childNodes[7].value,
-                req: child.childNodes[11].childNodes[5].childNodes[3].checked
+                req: child.childNodes[11].childNodes[5].childNodes[3].checked,
+                img: image_name
               }));
               count++;
-            }
+           
+            } 
           }
           Promise.all(promises)
             .then((uploadedMediaList) => {
-              document.querySelector('.container').innerHTML = ` <div class="container">
-            <div class="box form_title onCreateMsg" style="background-color: rgb(239, 241, 231); border: 2px solid green; padding-left: 10px;">
+              document.querySelector('body').innerHTML = ` 
+            <div class=" onCreateMsg" style="background-color: rgb(239, 241, 231); border: 2px solid green; width:90%;margin-right:5%;margin">
             <h1>Great! Your form has been successfully created.</h1>
             <p>Go to <a href="/form">Your Forms</a> page to manage your form.</p>
             </div>
-            </div>`;
+            `;
             })
             .catch((err) => alert(err.code));
 

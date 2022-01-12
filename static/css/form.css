@@ -31,16 +31,17 @@
     margin-top: 80px;
     margin-left: auto;
     margin-right: auto;
-    width:800px;
+    width:100%;
 }
+
 
 a {
     text-decoration: none;
     color: green;
     background-color:white;
-    font-size: 40px;
+    font-size:1.9rem;
     display: inline-block;
-    margin-left: 20px;
+   margin-top: 1%;
 }
 .a{
     background-color: rgb(243, 245, 235);
@@ -83,14 +84,22 @@ h1 {
     height: 60px;
     background-color:white;
 }
-#response{
+.response{
     margin: 10px; 
     padding: 10px; 
-    font-size: 18px; 
+    font-size: 1.3rem; 
     float:left; 
     color:black;
+    display: block;
+  width: 250px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+    
+  
+  
 }
-#response:hover{
+.response:hover{
     color:green;
 }
 .subject {
@@ -108,21 +117,117 @@ h1 {
 .date {
     margin-top: 10px;
     padding: 10px;
-    padding-left:20px;
+    padding-left:5px;
     padding-right:0px;
     align-content: center;      
-    font-size: large;      
+    font-size: 1.3rem;      
     border-left: solid green 3px;  
     float:left;
 }
 
 .row .delete, .row .download {
-    font-size: 30px;
-    padding-top: 15px;
+    
+    
     padding-left:10px;
-    padding-right:15px;
+    padding-right:10px;
     cursor: pointer;
+    
 }
+.delete{
+    margin-left: 30px;
+}
+.copylink{
+        padding-top: 10px;
+    padding-left:10px;
+    padding-right:10px;
+}
+@media screen and (max-width: 650px) {
+.response{
+    width: 170px;
+}
+}
+@media screen and (max-width: 650px) {
+.response{
+    width: 130px;
+}
+}
+@media screen and (max-width: 500px) {
+  .container{
+    
+    width: 95%;
+    
+  }
+.delete{
+    margin-left: 10px;
+   
+}
+a{
+    margin-top: 3%;
+    font-size: 1.5rem;
+}
+.date {
+    font-size: 1rem;
+}
+.response{
+    font-size: 1rem;
+}
+
+.row .download,.copylink{
+        padding-left: 4px;
+    padding-right: 4px;
+}
+.row .delete{
+        padding-left: 6px;
+    padding-right: 4px;
+}
+}
+
+@media screen and (max-width: 430px) {
+
+    .response{
+    width: 70px;
+}
+}
+@media screen and (max-width: 365px) {
+
+    .response{
+    width: 60px;
+}
+}
+
+@media screen and (max-width: 350px) {
+  .container{
+    
+    width: 95%;
+    
+  }
+.delete{
+    margin-left: 5px;
+   
+}
+a{
+    margin-top: 5%;
+    font-size: 1rem;
+}
+.date {
+    font-size: 0.8rem;
+}
+.response{
+    font-size: 0.8rem;
+}
+
+.row .download,.copylink{
+        padding-left: 2px;
+    padding-right: 2px;
+}
+.row .delete{
+        padding-left: 4px;
+    padding-right: 2px;
+}
+}
+    
+  
+
 
 .loader {
     border: 5px solid #ffffff; /* Light grey */
