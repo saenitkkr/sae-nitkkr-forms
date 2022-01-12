@@ -245,3 +245,19 @@ a{
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+.onCreateMsg {
+  
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  border-radius: 8px;
+}
+
+.onCreateMsg h1 {
+  font-size: 20px;
+}
+.onCreateMsg a {
+  text-decoration: none;
+  color: green;
+}

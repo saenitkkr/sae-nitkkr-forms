@@ -177,7 +177,17 @@
 
             copyText = e.target.parentElement.href;
             navigator.clipboard.writeText(copyText);
+            //console.log(screen.width)
+            if(screen.width>1000)
             alert("Copied the text: " + copyText);
+            else
+            {
+               var anc= document.createElement("A");
+               anc.href=copyText;
+               anc.target="_blank";
+               anc.click();
+            }
+           // window.location.href=`${copyText}`
         })
     }  //end of render data function
 

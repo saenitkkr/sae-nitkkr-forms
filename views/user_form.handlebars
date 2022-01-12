@@ -6,7 +6,7 @@
     </div>
 
     <form id="main">
-      <div class="box">
+      <div class="boxer">
          <input type="number" min="1" class="ID " id="op" data-id="ok" placeholder="Roll Number" required>
       </div>
      
@@ -408,9 +408,11 @@
     })
   }
 
-  var roll_number = document.getElementById("op");
-
+  var roll_number ;
+  
   function previous_roll_check() {
+     roll_number=document.getElementById("op");
+     console.log(roll_number.value)
     for (var i = 0; i < previous_roll_no.length; i++) {
       if (roll_number.value == previous_roll_no[i]) {
         roll_number.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -444,8 +446,10 @@
         document.querySelector('.result').innerHTML = "<div class='loader'></div>"
         var ID;
         for (var child = form.firstChild; child !== null; child = child.nextSibling) {
-          if (child.className == 'ID') {
-            ID = child.value;
+          if (child.className == 'boxer') {
+
+            ID = child.querySelector('#op').value;
+            console.log(ID+" id")
             db.collection("form").doc(form_timestamp).collection("ans").doc(ID).set({
               roll: ID,
             });

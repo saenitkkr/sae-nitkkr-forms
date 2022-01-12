@@ -435,7 +435,9 @@
             docs.forEach((doc) => {
                 if (doc.id == (num + "_U")) {
                     var filename = doc.data().ans;
+                    //console.log(filename+" im up")
                     if (filename != "null") {
+                       
 
                         let storageRef = firebase.storage().ref(form_timestamp + "/" + roll_arr[response] + "/" + num);
                         let this_ref = storageRef.child(filename)
@@ -446,10 +448,15 @@
                             }).catch(e => {
                                 console.log('error uploading' + e);
                             })
+                             pdf.setAttribute("alt", "error")
+                             pdf.innerHTML = "click to open"
+                             pdf.style.pointerEvents = "auto";
+
+                           //  console.log("im not null " +mainContainer.childNodes[count].childNodes[5])
                     }
 
                     else {
-                        //console.log("im here")
+                       // console.log("im here")
                         var pdf = mainContainer.childNodes[count].childNodes[5];
                         pdf.setAttribute("alt", "no file uploaded")
                         pdf.setAttribute("href", "$")
