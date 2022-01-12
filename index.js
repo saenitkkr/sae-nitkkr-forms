@@ -10,24 +10,24 @@ const app = express()
 
 const session_time = 1000 * 60 * 60 * 24 * 1;
 
-var firebaseConfig = {
-  apiKey: "AIzaSyDD6ZpbrX17ySGVrH8w0wYDqvGyMXYnPlo",
-  authDomain: "kritika-a12ae.firebaseapp.com",
-  projectId: "kritika-a12ae",
-  storageBucket: "kritika-a12ae.appspot.com",
-  messagingSenderId: "1074719455050",
-  appId: "1:1074719455050:web:42703119681390e56033b3",
-  measurementId: "G-T7X5WRL1GS"
-};
-// const firebaseConfig = {
-//   apiKey: "AIzaSyAfGWoUlOwoP5PHuRy4FP9Ic1w1YxY2uFA",
-//   authDomain: "saenitkkrforms.firebaseapp.com",
-//   projectId: "saenitkkrforms",
-//   storageBucket: "saenitkkrforms.appspot.com",
-//   messagingSenderId: "248727434698",
-//   appId: "1:248727434698:web:0f5498ae740f9ff9738b33",
-//   measurementId: "G-PXQ86P5ZPQ"
+// var firebaseConfig = {
+//   apiKey: "AIzaSyDD6ZpbrX17ySGVrH8w0wYDqvGyMXYnPlo",
+//   authDomain: "kritika-a12ae.firebaseapp.com",
+//   projectId: "kritika-a12ae",
+//   storageBucket: "kritika-a12ae.appspot.com",
+//   messagingSenderId: "1074719455050",
+//   appId: "1:1074719455050:web:42703119681390e56033b3",
+//   measurementId: "G-T7X5WRL1GS"
 // };
+const firebaseConfig = {
+  apiKey: "AIzaSyAfGWoUlOwoP5PHuRy4FP9Ic1w1YxY2uFA",
+  authDomain: "saenitkkrforms.firebaseapp.com",
+  projectId: "saenitkkrforms",
+  storageBucket: "saenitkkrforms.appspot.com",
+  messagingSenderId: "248727434698",
+  appId: "1:248727434698:web:0f5498ae740f9ff9738b33",
+  measurementId: "G-PXQ86P5ZPQ"
+};
 const port = process.env.PORT || 5000;
 
 // Initialize Firebase
